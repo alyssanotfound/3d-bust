@@ -11,7 +11,7 @@
 }
 */
 
-@font-face {
+/*@font-face {
     font-family: 'Conv_andrich-regular';
     src: url('../fonts/andrich-regular.eot');
     src: local('☺'), url('../fonts/andrich-regular.woff') format('woff'), url('../fonts/andrich-regular.ttf') format('truetype'), url('../fonts/andrich-regular.svg') format('svg');
@@ -25,7 +25,7 @@
     src: local('☺'), url('../fonts/zagolovochnaya.woff') format('woff'), url('../fonts/zagolovochnaya.ttf') format('truetype'), url('../fonts/zagolovochnaya.svg') format('svg');
     font-weight: normal;
     font-style: normal;
-}
+}*/
 
 .btn {
     font-family: serif;
@@ -36,9 +36,9 @@
 }
 
 #title {
-    font-family:'zagolovochnaya, Conv_andrich-regular',Times, serif;
-    color: #fdf9fa;
-    font-size: 30px;
+    font-family: serif;
+    color: #fefffb;
+    font-size: 15px;
     margin-left: 40px;
     
 }
@@ -53,7 +53,7 @@
 }
 
 html { 
-  background: url(../images/alyssa-davis-gallery.jpg) no-repeat center center fixed; 
+  background: url(../images/pokuasi.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

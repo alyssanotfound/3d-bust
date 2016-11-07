@@ -1,0 +1,25 @@
+.info {
+    font-family: serif;
+    color: #fefffb;
+    font-size: 15px;
+    margin-left: 40px;
+    margin-top: 30px;
+    
+}
+
+#container {
+    position: fixed;
+    color: #fdf9fa;
+    width: 200px;
+    bottom: 20px;
+    right: 10px;
+
+}
+
+html { 
+  background: url(../images/pokuasi-II.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
