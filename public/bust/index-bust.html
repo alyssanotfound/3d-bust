@@ -36,12 +36,13 @@
 
         var camera, controls, scene, renderer;
         var lighting, ambient, keyLight, fillLight, backLight;
+        var object;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
 
         init();
-        animate();
+        //animate(); //wait until object is loaded
 
         function init() {
 
@@ -51,7 +52,8 @@
             /* Camera */
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.z = 3;
+            camera.position.y = 0.5;
+            camera.position.z = 2;
 
             /* Scene */
 
@@ -85,10 +87,12 @@
                 var objLoader = new THREE.OBJLoader();
                 objLoader.setMaterials(materials);
                 objLoader.setPath('assets/');
-                objLoader.load('test-texture.obj', function (object) {
-
+                objLoader.load('test-texture.obj', function (obj) {
+                    object = obj;
+                    console.log(object);
+                    object.rotation.y = 1;
                     scene.add(object);
-
+                    animate();
                 });
 
             });
@@ -99,15 +103,16 @@
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(new THREE.Color("hsla(0, 100%, 100%, 1)"));
-
+            console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
             /* Controls */
 
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.25;
-            controls.enableZoom = false;
+            // controls = new THREE.OrbitControls(camera, renderer.domElement);
+            // controls.enableDamping = true;
+            // controls.dampingFactor = 0.25;
+            // controls.enableZoom = false;
+
 
             /* Events */
 
@@ -158,14 +163,16 @@
 
             requestAnimationFrame(animate);
 
-            controls.update();
-
+            // controls.update();
+            
             render();
 
         }
 
         function render() {
-
+            // add code here to make object move
+            object.rotation.y += 0.05;
+            console.log(object.rotation.x + ", " + object.rotation.y);
             renderer.render(scene, camera);
 
         }
