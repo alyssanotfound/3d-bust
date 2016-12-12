@@ -51,6 +51,7 @@
         var theta = 0;
         var numModels = 13;
         var arrayOfBusts = new Array(numModels);
+        var testArray = [];
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -103,7 +104,7 @@
                     object = obj;
                     //console.log(object);
                     //scene.add(object);
-                    animate();
+                    //animate();
                 });
 
             });
@@ -120,9 +121,9 @@
                 objLoader.setPath('assets/');
                 objLoader.load('test-texture.obj', function (obj) {
                     object2 = obj;
-                    console.log(object2);
+                    //console.log(object2);
                     //scene.add(object2);
-                    animate();
+                    //animate();
                 });
 
             });
@@ -130,9 +131,29 @@
             /* Generate 13 busts */
 
             
-            for (var i = numModels - 1; i >= 0; i--) {
-                console.log("create bust number " + i);
-                mtlLoader.load('test-texture.mtl', function (materials) {
+            // for (var i = numModels - 1; i >= 0; i--) {
+            //     console.log("create bust number " + i);
+            //     mtlLoader.load('test-texture.mtl', function (materials) {
+
+            //         materials.preload();
+
+            //         var objLoader = new THREE.OBJLoader();
+            //         objLoader.setMaterials(materials);
+            //         objLoader.setPath('assets/');
+            //         objLoader.load('test-texture.obj', function (obj) {
+            //             arrayOfBusts[i] = obj;
+            //             console.log(arrayOfBusts[i]); //prints correctly
+            //             scene.add(arrayOfBusts[i]);  
+            //             animate(); 
+            //         });
+            //     });
+            // }
+
+
+            for (var i = numModels - 1; i >= 0; i--){ 
+                (function(index){
+                    //console.log("create bust number " + i);
+                    mtlLoader.load('test-texture.mtl', function (materials) {
 
                     materials.preload();
 
@@ -141,15 +162,17 @@
                     objLoader.setPath('assets/');
                     objLoader.load('test-texture.obj', function (obj) {
                         arrayOfBusts[i] = obj;
-                        console.log(arrayOfBusts[i]);
-                        scene.add(arrayOfBusts[i]);   
+                        testArray.push(obj);
+                        //console.log(i + " , " + arrayOfBusts[i]); //prints correctly
+                        scene.add(arrayOfBusts[i]);  
+                        animate(); 
                     });
-
                 });
-                console.log(arrayOfBusts);
-                //animate();
+                })(i);
             }
-            
+
+
+             
             
 
             /* Renderer */
@@ -158,7 +181,7 @@
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
             renderer.setClearColor(new THREE.Color("hsl(180, 100%, 50%)"));
-            console.log(renderer.domElement);
+            //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
             /* Controls */
@@ -215,7 +238,7 @@
         }
 
         function animate() {
-            console.log("inside animate");
+            //console.log("inside animate");
             requestAnimationFrame(animate);
 
             // controls.update();
@@ -226,7 +249,7 @@
 
         function render() {
             // add code here to make object move
-            var increment = .2; //changes speed
+            var increment = .1; //changes speed
             var pathEllipse = 1;
             //theta is degrees
             theta += increment;
@@ -236,8 +259,29 @@
             // //0.2 makes the revolution an oval
             // object.position.z = pathEllipse * Math.sin(radians)+0.5; 
             // //+90 lines up rotation with revolution
-            // object.rotation.y = -1*(theta-90) * Math.PI / 180; 
-            console.log("inside render loop");
+            // object.rotation.y = -1*(theta-90) * Math.PI / 180;
+
+            //testArray[12] is the last model that needs to be loaded
+            if (testArray[12] != undefined ){
+                console.log("now start animations");
+                testArray[0].position.x = Math.cos(radians)+0.5;
+                //0.2 makes the revolution an oval
+                testArray[0].position.z = pathEllipse * Math.sin(radians)+0.5; 
+                //+90 lines up rotation with revolution
+                testArray[0].rotation.y = -1*(theta-90) * Math.PI / 180;
+                
+                radianPosition = 2*Math.PI/13;
+                testArray[1].position.x = Math.cos(radians + radianPosition)+0.5;
+                testArray[1].position.z = pathEllipse * Math.sin(radians + radianPosition)+0.5; 
+                testArray[1].rotation.y = -1*(radians-(Math.PI/2));
+                 
+                //for (var i = testArray.length - 1; i >= 0; i--) {
+                    //console.log(arrayOfBusts[i]);
+                    // testArray[0].position.x = Math.cos( (theta + pathEllipse*1*(360/numModels))* Math.PI / 180 )+0.5;
+                    // testArray[0].position.z = pathEllipse * Math.sin( (theta + pathEllipse*1*(360/numModels)* Math.PI / 180))+0.5; 
+                    // testArray[0].rotation.y = -1*(theta-90+pathEllipse*1*(360/numModels))* Math.PI / 180; 
+                //}
+            }
             //console.log(arrayOfBusts[1]);
             //update Model 2 position 
             // arrayOfBusts[12].position.x = Math.cos(Math.radians(theta + pathEllipse*(360/numModels)))+0.5;
