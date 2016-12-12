@@ -93,62 +93,8 @@
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl('assets/');
             mtlLoader.setPath('assets/');
-            mtlLoader.load('test-texture.mtl', function (materials) {
-
-                materials.preload();
-
-                var objLoader = new THREE.OBJLoader();
-                objLoader.setMaterials(materials);
-                objLoader.setPath('assets/');
-                objLoader.load('test-texture.obj', function (obj) {
-                    object = obj;
-                    //console.log(object);
-                    //scene.add(object);
-                    //animate();
-                });
-
-            });
-
-            /* Model 2 */
-
             
-            mtlLoader.load('test-texture.mtl', function (materials) {
-
-                materials.preload();
-
-                var objLoader = new THREE.OBJLoader();
-                objLoader.setMaterials(materials);
-                objLoader.setPath('assets/');
-                objLoader.load('test-texture.obj', function (obj) {
-                    object2 = obj;
-                    //console.log(object2);
-                    //scene.add(object2);
-                    //animate();
-                });
-
-            });
-
             /* Generate 13 busts */
-
-            
-            // for (var i = numModels - 1; i >= 0; i--) {
-            //     console.log("create bust number " + i);
-            //     mtlLoader.load('test-texture.mtl', function (materials) {
-
-            //         materials.preload();
-
-            //         var objLoader = new THREE.OBJLoader();
-            //         objLoader.setMaterials(materials);
-            //         objLoader.setPath('assets/');
-            //         objLoader.load('test-texture.obj', function (obj) {
-            //             arrayOfBusts[i] = obj;
-            //             console.log(arrayOfBusts[i]); //prints correctly
-            //             scene.add(arrayOfBusts[i]);  
-            //             animate(); 
-            //         });
-            //     });
-            // }
-
 
             for (var i = numModels - 1; i >= 0; i--){ 
                 (function(index){
@@ -171,16 +117,12 @@
                 })(i);
             }
 
-
-             
-            
-
             /* Renderer */
 
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
-            renderer.setClearColor(new THREE.Color("hsl(180, 100%, 50%)"));
+            renderer.setClearColor(new THREE.Color("hsla(360, 100%, 100%, 1)"));
             //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
@@ -248,62 +190,24 @@
         }
 
         function render() {
-            // add code here to make object move
-            var increment = .1; //changes speed
+            var increment = .01; //changes speed
             var pathEllipse = 1;
             //theta is degrees
             theta += increment;
             var radians = theta * Math.PI / 180;
-            //update Model 1 position 
-            // object.position.x = Math.cos(radians)+0.5;
-            // //0.2 makes the revolution an oval
-            // object.position.z = pathEllipse * Math.sin(radians)+0.5; 
-            // //+90 lines up rotation with revolution
-            // object.rotation.y = -1*(theta-90) * Math.PI / 180;
+            //update all Model positions 
 
             //testArray[12] is the last model that needs to be loaded
             if (testArray[12] != undefined ){
-                console.log("now start animations");
-                testArray[0].position.x = Math.cos(radians)+0.5;
-                //0.2 makes the revolution an oval
-                testArray[0].position.z = pathEllipse * Math.sin(radians)+0.5; 
-                //+90 lines up rotation with revolution
-                testArray[0].rotation.y = -1*(theta-90) * Math.PI / 180;
-                
-                radianPosition = 2*Math.PI/13;
-                testArray[1].position.x = Math.cos(radians + radianPosition)+0.5;
-                testArray[1].position.z = pathEllipse * Math.sin(radians + radianPosition)+0.5; 
-                testArray[1].rotation.y = -1*(radians-(Math.PI/2));
-                 
-                //for (var i = testArray.length - 1; i >= 0; i--) {
-                    //console.log(arrayOfBusts[i]);
-                    // testArray[0].position.x = Math.cos( (theta + pathEllipse*1*(360/numModels))* Math.PI / 180 )+0.5;
-                    // testArray[0].position.z = pathEllipse * Math.sin( (theta + pathEllipse*1*(360/numModels)* Math.PI / 180))+0.5; 
-                    // testArray[0].rotation.y = -1*(theta-90+pathEllipse*1*(360/numModels))* Math.PI / 180; 
-                //}
+                //console.log("now start animations");
+                var radianPosition = 2*Math.PI/numModels;
+
+                for (var i = testArray.length - 1; i >= 0; i--) {
+                    testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
+                    testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
+                    testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+                }
             }
-            //console.log(arrayOfBusts[1]);
-            //update Model 2 position 
-            // arrayOfBusts[12].position.x = Math.cos(Math.radians(theta + pathEllipse*(360/numModels)))+0.5;
-            // arrayOfBusts[12].position.z = pathEllipse * Math.sin(Math.radians(theta + pathEllipse*(360/numModels)))+0.5; 
-            // arrayOfBusts[12].rotation.y = -1*Math.radians(theta-90+pathEllipse*(360/numModels)); 
-            // console.log(arrayOfBusts);
-            // //update positions of 13 busts
-            // arrayOfBusts[12].position.x = Math.cos(radians)+0.5;
-            // //0.2 makes the revolution an oval
-            // arrayOfBusts[12].position.z = pathEllipse * Math.sin(radians)+0.5; 
-            // //+90 lines up rotation with revolution
-            // arrayOfBusts[12].rotation.y = -1*(theta-90) * Math.PI / 180; 
-            
-            // for (var i = numModels - 1; i >= 0; i--) {
-            //     console.log(arrayOfBusts[i]);
-            //     arrayOfBusts[i].position.x = Math.cos(Math.radians(theta + pathEllipse*i*(360/numModels)))+0.5;
-            // arrayOfBusts[i].position.z = pathEllipse * Math.sin(Math.radians(theta + pathEllipse*i*(360/numModels)))+0.5; 
-            // arrayOfBusts[i].rotation.y = -1*Math.radians(theta-90+pathEllipse*i*(360/numModels)); 
-
-            // }
-
-            // console.log(theta + ", x:" + (Math.round( Math.cos(Math.radians(theta)) * 10) / 10) + ", z:" +  (Math.round( 0.2 * Math.sin(Math.radians(theta)) * 10) / 10)+ ", y-rotation:" +  (Math.round( Math.radians(theta)) * 10) / 10);
             renderer.render(scene, camera);
 
         }
