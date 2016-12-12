@@ -37,6 +37,7 @@
         var camera, controls, scene, renderer;
         var lighting, ambient, keyLight, fillLight, backLight;
         var object;
+        var theta = 0;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -52,6 +53,7 @@
             /* Camera */
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.x = 0.5;
             camera.position.y = 0.5;
             camera.position.z = 2;
 
@@ -90,7 +92,7 @@
                 objLoader.load('test-texture.obj', function (obj) {
                     object = obj;
                     console.log(object);
-                    object.rotation.y = 1;
+                    object.rotation.y = 0.01;
                     scene.add(object);
                     animate();
                 });
@@ -171,7 +173,15 @@
 
         function render() {
             // add code here to make object move
-            object.rotation.y += 0.05;
+            if (theta == 360) {
+                theta = 0;
+            } else {
+                theta = theta + 0.01;
+            }
+
+            object.position.x = Math.cos(theta);
+            object.position.y = 0.2 * Math.sin(theta);
+            object.rotation.y = Math.cos(theta);
             console.log(object.rotation.x + ", " + object.rotation.y);
             renderer.render(scene, camera);
 
