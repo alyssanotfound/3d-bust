@@ -47,11 +47,15 @@
 
         var camera, controls, scene, renderer;
         var lighting, ambient, keyLight, fillLight, backLight;
+        var mouse;
         var object, object2;
         var theta = 0;
+        var tgtTheta;
         var numModels = 13;
         var arrayOfBusts = new Array(numModels);
         var testArray = [];
+        var pause = false;
+        var revolveClicked = false;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -117,6 +121,10 @@
                 })(i);
             }
 
+            /* Vectors */
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
             /* Renderer */
 
             renderer = new THREE.WebGLRenderer();
@@ -138,6 +146,8 @@
 
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('keydown', onKeyboardEvent, false);
+
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
         }
 
@@ -179,17 +189,59 @@
 
         }
 
+        function onDocumentMouseDown( event ) {
+
+            event.preventDefault(); //check what this does
+    
+            mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+            mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+            
+            raycaster.setFromCamera( mouse, camera );
+            var intersects = raycaster.intersectObjects( testArray, true );
+            console.log(mouse.x + ", " + mouse.y);
+            
+
+            if ( intersects.length > 0 ) {
+                //pause = true;
+                console.log("clicked on: ");
+                console.log(intersects);
+                console.log("ID in question: " + intersects[0].object.uuid);
+                var bustInQuestion = intersects[0].object.uuid;
+                var matchingBustNum;
+                //find matching bust
+                for (var i = testArray.length - 1; i >= 0; i--) {
+                    if (bustInQuestion == testArray[i].children[0].uuid)
+                    console.log("match found: " + i);
+                    matchingBustNum = i;
+                }
+                console.log(theta);
+                console.log(((theta/360) % 1)*360);
+                
+                theta = (((theta/360) % 1)*360); //update for actual theta based on obj position
+                tgtTheta = 360;
+                revolveClicked = true;
+            }
+
+        }
+
         function animate() {
             //console.log("inside animate");
             requestAnimationFrame(animate);
-
             // controls.update();
-            
             render();
 
         }
 
         function render() {
+            if (pause == false) {
+                updateRevolution();   
+            } if (revolveClicked == true) {
+                speedRevToClickedBust(tgtTheta);
+            }
+            renderer.render(scene, camera);
+        }
+
+        function updateRevolution() {
             var increment = .01; //changes speed
             var pathEllipse = 1;
             //theta is degrees
@@ -208,9 +260,32 @@
                     testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
                 }
             }
-            renderer.render(scene, camera);
+        }
+
+        function speedRevToClickedBust(targetTheta) {
+            console.log("speed up");
+            //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
+            var increment = .5;
+            var pathEllipse = 1;
+            theta += increment;
+            var radians = theta * Math.PI / 180;
+            var radianPosition = 2*Math.PI/numModels;
+            console.log("theta: " + Math.round(theta));
+            console.log("target theta: " + targetTheta);
+
+            for (var i = testArray.length - 1; i >= 0; i--) {
+                testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
+                testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
+                testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+            }
+            if (Math.round(theta) == targetTheta) {
+                console.log("reached origin");
+                pause = true;
+                revolveClicked = false;
+            }
 
         }
+        
 
 
     </script>
