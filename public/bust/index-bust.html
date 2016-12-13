@@ -49,11 +49,12 @@
         var lighting, ambient, keyLight, fillLight, backLight;
         var mouse;
         var theta = 0;
-        var tgtTheta;
+        var targetTheta;
         var numModels = 13;
         var testArray = [];
         var pause = false;
-        //var revolveClicked = false;
+        var revolveDirection = "left";
+        var revolveClicked = false;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -148,7 +149,27 @@
             window.addEventListener('keydown', onKeyboardEvent, false);
 
             //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'click', onDocumentClick, false );
+            document.onkeydown = checkKey;
+        }
 
+
+
+        function checkKey(e) {
+
+            e = e || window.event;
+
+            if (e.keyCode == '37') {
+                console.log("left arrow");
+                revolveDirection = "left";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+            } else if (e.keyCode == '39') {
+                console.log("right arrow");
+                revolveDirection = "right";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+            }
         }
 
         function onWindowResize() {
@@ -189,6 +210,29 @@
 
         }
 
+        function onDocumentClick( event ) {
+            event.preventDefault();
+            var xClick = event.clientX;
+            var halfX = (document.documentElement.clientWidth)/2;
+
+            if (xClick < halfX) {
+                //rotate left
+                console.log("left");
+                //switch bc we assume if someone clicks on the model 
+                //on the left it should move towards them
+                revolveDirection = "right";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+            } else {
+                //rotate right
+                console.log("right");
+                revolveDirection = "left";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+            }
+            console.log(event.clientX )
+            console.log(halfX);
+        }
         // function onDocumentMouseDown( event ) {
 
         //     event.preventDefault(); //check what this does
@@ -249,25 +293,32 @@
 
         function render() {
             if (pause == false) {
-                updateRevolution();   
+                updateRevolution(revolveDirection);   
             } 
-            // if (revolveClicked == true) {
-            //     speedRevToClickedBust(tgtTheta);
-            // }
+            if (revolveClicked == true) {
+                
+                rotateOneBustInterval(targetTheta);
+            }
             renderer.render(scene, camera);
         }
 
-        function updateRevolution() {
+        function updateRevolution(direction) {
             var increment = .01; //changes speed
             var pathEllipse = 1;
             //theta is degrees
-            theta += increment;
+            if (direction == "left") {
+                theta += increment;
+            } else if (direction =="right"){
+                theta -= increment;
+            } else {
+                console.log("error: undefined direction");
+            }
+            
             var radians = theta * Math.PI / 180;
             //update all Model positions 
-
+            //console.log(theta);
             //testArray[12] is the last model that needs to be loaded
             if (testArray[12] != undefined ){
-                console.log(theta);
                 //multiple to add for each
                 var radianPosition = 2*Math.PI/numModels;
 
@@ -278,6 +329,53 @@
                 }
             }
         }
+
+        function findTargetTheta() {
+            //check if current theta is positive or negative
+            if (theta > 0 && revolveDirection == "left") {
+                targetTheta = Math.round(theta + (360/numModels));
+            } else if (theta > 0 && revolveDirection == "right") {
+                targetTheta = Math.round(theta - (360/numModels));
+            } else if (theta < 0 && revolveDirection == "left") {
+                targetTheta = Math.round(theta + (360/numModels));
+            } else if (theta < 0 && revolveDirection == "right") {
+                targetTheta = Math.round(theta - (360/numModels));
+            }
+        }
+
+        function rotateOneBustInterval(targetTheta) {
+            console.log("speed up");
+            //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
+            var increment = .6;
+            var pathEllipse = 1;
+            
+            if (revolveDirection == "left") {
+                theta += increment;
+            } else if (revolveDirection =="right"){
+                theta -= increment;
+            } else {
+                console.log("error: undefined direction");
+            }
+            
+
+            var radians = theta * Math.PI / 180;
+            var radianPosition = 2*Math.PI/numModels;
+            console.log("theta: " + Math.round(theta));
+            console.log("target theta: " + targetTheta);
+
+            for (var i = testArray.length - 1; i >= 0; i--) {
+                testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
+                testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
+                testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+            }
+            if (Math.round(theta) == targetTheta) {
+                console.log("reached origin");
+                pause = true;
+                revolveClicked = false;
+            }
+
+        }
+
 
         // function speedRevToClickedBust(targetTheta) {
         //     console.log("speed up");
