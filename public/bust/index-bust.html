@@ -48,13 +48,12 @@
         var camera, controls, scene, renderer;
         var lighting, ambient, keyLight, fillLight, backLight;
         var mouse;
-        var object, object2;
         var theta = 0;
         var tgtTheta;
         var numModels = 13;
         var testArray = [];
         var pause = false;
-        var revolveClicked = false;
+        //var revolveClicked = false;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -148,7 +147,7 @@
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('keydown', onKeyboardEvent, false);
 
-            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
         }
 
@@ -190,40 +189,55 @@
 
         }
 
-        function onDocumentMouseDown( event ) {
+        // function onDocumentMouseDown( event ) {
 
-            event.preventDefault(); //check what this does
+        //     event.preventDefault(); //check what this does
     
-            mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-            mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+        //     mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+        //     mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
             
-            raycaster.setFromCamera( mouse, camera );
-            var intersects = raycaster.intersectObjects( testArray, true );
-            console.log(mouse.x + ", " + mouse.y);
+        //     raycaster.setFromCamera( mouse, camera );
+        //     var intersects = raycaster.intersectObjects( testArray, true );
+        //     console.log(mouse.x + ", " + mouse.y);
             
 
-            if ( intersects.length > 0 ) {
-                //pause = true;
-                console.log("clicked on: ");
-                console.log(intersects);
-                console.log("ID in question: " + intersects[0].object.uuid);
-                var bustInQuestion = intersects[0].object.uuid;
-                var matchingBustNum;
-                //find matching bust
-                for (var i = testArray.length - 1; i >= 0; i--) {
-                    if (bustInQuestion == testArray[i].children[0].uuid)
-                    console.log("match found: " + i);
-                    matchingBustNum = i;
-                }
-                console.log(theta);
-                console.log(((theta/360) % 1)*360);
+        //     if ( intersects.length > 0 ) {
+        //         //pause = true;
+        //         console.log("clicked on: ");
+        //         console.log(intersects);
+        //         console.log("ID in question: " + intersects[0].object.uuid);
+        //         var bustInQuestion = intersects[0].object.uuid;
+        //         var matchingBustNum;
+        //         //find matching bust
+        //         for (var i = testArray.length - 1; i >= 0; i--) {
+        //             if (bustInQuestion == testArray[i].children[0].uuid){
+        //                 console.log("match found: " + i);
+        //                 matchingBustNum = i;
+        //             }
+        //         }
+        //         console.log(theta);
+        //         console.log(matchingBustNum);
+        //         //find theta of actual model that was clicked
+        //         var thisBustTheta = (theta + ((360/numModels) * matchingBustNum));
+        //         //find just decimal
+        //         var thisBustThetaRatio = ((theta + ((360/numModels) * matchingBustNum))/360)%1;
+        //         console.log(thisBustThetaRatio);
                 
-                theta = (((theta/360) % 1)*360); //update for actual theta based on obj position
-                tgtTheta = 360;
-                revolveClicked = true;
-            }
+        //         //set theta between 0 and 360 so that
+        //         //busts are still in the same place
+        //         theta = ((theta/360)%1)*360;
+        //         console.log(theta);
+        //         if (thisBustThetaRatio <= 0.25) {
+        //             tgtTheta = Math.round(90 - thisBustTheta);  
+        //         } else if (thisBustThetaRatio > 0.25){
+        //             tgtTheta = Math.round(450 - thisBustTheta);
+        //         }
+        //         //console.log(thisBustTheta);
+        //         console.log(tgtTheta);
+        //         revolveClicked = true;
+        //     }
 
-        }
+        // }
 
         function animate() {
             //console.log("inside animate");
@@ -236,9 +250,10 @@
         function render() {
             if (pause == false) {
                 updateRevolution();   
-            } if (revolveClicked == true) {
-                speedRevToClickedBust(tgtTheta);
-            }
+            } 
+            // if (revolveClicked == true) {
+            //     speedRevToClickedBust(tgtTheta);
+            // }
             renderer.render(scene, camera);
         }
 
@@ -252,7 +267,8 @@
 
             //testArray[12] is the last model that needs to be loaded
             if (testArray[12] != undefined ){
-                //console.log("now start animations");
+                console.log(theta);
+                //multiple to add for each
                 var radianPosition = 2*Math.PI/numModels;
 
                 for (var i = testArray.length - 1; i >= 0; i--) {
@@ -263,29 +279,29 @@
             }
         }
 
-        function speedRevToClickedBust(targetTheta) {
-            console.log("speed up");
-            //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
-            var increment = .5;
-            var pathEllipse = 1;
-            theta += increment;
-            var radians = theta * Math.PI / 180;
-            var radianPosition = 2*Math.PI/numModels;
-            console.log("theta: " + Math.round(theta));
-            console.log("target theta: " + targetTheta);
+        // function speedRevToClickedBust(targetTheta) {
+        //     console.log("speed up");
+        //     //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
+        //     var increment = .5;
+        //     var pathEllipse = 1;
+        //     theta += increment;
+        //     var radians = theta * Math.PI / 180;
+        //     var radianPosition = 2*Math.PI/numModels;
+        //     console.log("theta: " + Math.round(theta));
+        //     console.log("target theta: " + targetTheta);
 
-            for (var i = testArray.length - 1; i >= 0; i--) {
-                testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
-                testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
-                testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
-            }
-            if (Math.round(theta) == targetTheta) {
-                console.log("reached origin");
-                pause = true;
-                revolveClicked = false;
-            }
+        //     for (var i = testArray.length - 1; i >= 0; i--) {
+        //         testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
+        //         testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
+        //         testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+        //     }
+        //     if (Math.round(theta) == targetTheta) {
+        //         console.log("reached origin");
+        //         pause = true;
+        //         revolveClicked = false;
+        //     }
 
-        }
+        // }
         
 
 
