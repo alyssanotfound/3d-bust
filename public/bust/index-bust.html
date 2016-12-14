@@ -55,6 +55,7 @@
         var pause = false;
         var revolveDirection = "left";
         var revolveClicked = false;
+        var layer = "one";
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -207,73 +208,38 @@
         function onDocumentClick( event ) {
             event.preventDefault();
 
-
             var xClick = event.clientX;
             var halfX = (document.documentElement.clientWidth)/2;
 
-            // mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-            // mouse.y = - ( event.clientY / renderer.domElement.clientWidth ) * 2 + 1;
-
-            //var clickedBusts = detectClickedBust(mouse.x, mouse.y);
+            if (layer == "one" && xClick < (halfX + 150) && xClick > (halfX - 150) ){
+                //call function to make layer two on 
+                layer = "two";
+            } 
+            if (layer == "one" && xClick < halfX) {
+                //rotate left
+                console.log("left");
+                //switch bc we assume if someone clicks on the model 
+                //on the left it should move towards them
+                revolveDirection = "right";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+                } 
+            if (layer == "one" && xClick >= halfX) {
+                //rotate right
+                console.log("right");
+                revolveDirection = "left";
+                findTargetTheta(revolveDirection);
+                revolveClicked = true;
+            }
             
-            //console.log(clickedBusts);
-            //console.log(xClick);
-            //console.log(halfX - 150);
-            //console.log(halfX + 150);
-
-            if (xClick < (halfX + 150) && xClick > (halfX - 150) ){
-                //call function to make central bust "on"
-                console.log("clicked bust is central, dont rotate"); 
-                pause = true;   
-            } else {
-                //click wasn't on 
-                if (xClick < halfX) {
-                    //rotate left
-                    console.log("left");
-                    //switch bc we assume if someone clicks on the model 
-                    //on the left it should move towards them
-                    revolveDirection = "right";
-                    findTargetTheta(revolveDirection);
-                    revolveClicked = true;
-                } else {
-                    //rotate right
-                    console.log("right");
-                    revolveDirection = "left";
-                    findTargetTheta(revolveDirection);
-                    revolveClicked = true;
-                }
-                //console.log(event.clientX )
-                //console.log(halfX);
-            }  
+            if (layer == "two" && (xClick < (halfX - 150) || xClick >= (halfX + 150))) {
+                //if user clicks off the center bust, it should 
+                //return to revolving busts layer one mode
+                turnOnAllBusts();
+                layer = "one";
+                pause = false;
+            }    
         }
-
-        // function detectClickedBust( mousex, mousey ) {
-        //     console.log("checking for clicked bust");
-        //     event.preventDefault(); //check what this does
-
-        //     raycaster.setFromCamera( mouse, camera );
-        //     var intersects = raycaster.intersectObjects( testArray, true );
-        //     console.log(mousex + ", " + mousey);
-            
-
-        //     if ( intersects.length > 0 ) {
-        //         //pause = true;
-        //         console.log("clicked on: ");
-        //         console.log(intersects);
-        //         console.log("ID in question: " + intersects[0].object.uuid);
-        //         var bustInQuestion = intersects[0].object.uuid;
-        //         var matchingBustNum = [];
-        //         //find matching bust
-        //         for (var i = testArray.length - 1; i >= 0; i--) {
-        //             if (bustInQuestion == testArray[i].children[0].uuid){
-        //                 console.log("match found: " + i);
-        //                 matchingBustNum.push(i);
-        //             }
-        //         }
-        //         console.log(matchingBustNum);
-        //     }
-        //     return matchingBustNum;
-        // }
 
         /* Core Animate Render Functions */
 
@@ -286,17 +252,46 @@
         }
 
         function render() {
-            if (pause == false) {
+            if (pause == false && layer == "one") {
                 updateRevolution(revolveDirection);   
             } 
-            if (revolveClicked == true) {
-                
+
+            if (revolveClicked == true && layer == "one") {
                 rotateOneBustInterval(targetTheta);
+            } 
+
+            if (layer == "two") {
+                isolateOneBust();
             }
+            
             renderer.render(scene, camera);
         }
 
         /* Update Frame Functions */
+
+        function isolateOneBust() {
+            //define bustOn to be the center one based on max z position value
+            //console.log(testArray[4]);
+            pause = true;
+            var bustOn = 4;
+            turnOffOtherBusts(bustOn); 
+
+        }
+
+        function turnOffOtherBusts(keepOn) {
+            for (var i = testArray.length - 1; i >= 0; i--) {
+                if (i != keepOn) {
+                    testArray[i].visible = false;
+                }
+                
+            }
+        }
+
+        function turnOnAllBusts() {
+            for (var i = testArray.length - 1; i >= 0; i--) {
+                testArray[i].visible = true;   
+            }
+        }
 
         function updateRevolution(direction) {
             var increment = .01; //changes speed
