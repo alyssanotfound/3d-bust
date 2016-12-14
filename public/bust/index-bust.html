@@ -59,6 +59,9 @@
         var layer = "one";
         var allBustsOn = true;
         var bustOn;
+        var autoRotate = true;
+        var saveBustOnRotPos;
+
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
 
@@ -164,24 +167,25 @@
 
         function onDocumentMouseDown(e) {
             if (layer == "two" || layer == "three"){
-                console.log("mouse down layer 2 or 3");
-                isDragging = true;   
+                console.log("mouse down layer 2 or 3");               
+                isDragging = true; 
+                autoRotate = false;  
             } 
         }
 
         function onDocumentMouseMove(e) {
             if (layer == "two" || layer == "three"){
-                console.log("mouse dragging");
+                //console.log("mouse dragging");
                 var deltaMove = {
                     x: e.offsetX-previousMousePosition.x,
                     y: e.offsetY-previousMousePosition.y
                 };
 
                 if(isDragging) {
-                        
+                    // console.log("while dragging: " + testArray[bustOn].rotation.y);
                     var deltaRotationQuaternion = new THREE.Quaternion()
                         .setFromEuler(new THREE.Euler(
-                            toRadians(deltaMove.y * 1),
+                            0,
                             toRadians(deltaMove.x * 1),
                             0,
                             'XYZ'
@@ -198,8 +202,11 @@
         }
 
         function onDocumentMouseUp(e) {
-            console.log("stop dragging");
-            isDragging = false;
+            if (layer == "two" || layer == "three"){
+                console.log("stop dragging");
+                isDragging = false;
+                //console.log("after: " + testArray[bustOn].rotation.y); 
+            }
         }
 
         function add3DInfoButton() {
@@ -211,14 +218,14 @@
             group.name = "mesh_button";
             scene.add( group );
             // points
-            var pointsGeometry = new THREE.DodecahedronGeometry( 0.1 );
+            var pointsGeometry = new THREE.DodecahedronGeometry( 0.03 );
             // for ( var i = 0; i < pointsGeometry.vertices.length; i ++ ) {
             //     //pointsGeometry.vertices[ i ].add( randomPoint().multiplyScalar( 2 ) ); // wiggle the points
             // }
             var pointsMaterial = new THREE.PointsMaterial( {
                 color: 0xFF33CC,
                 map: texture,
-                size: 0.03,
+                size: 0.01,
                 alphaTest: 0.5
             } );
             var points = new THREE.Points( pointsGeometry, pointsMaterial );
@@ -239,6 +246,10 @@
             mesh.renderOrder = 1;
 
             group.add( mesh );
+            group.position.x = testArray[bustOn].position.x;
+            group.position.y = testArray[bustOn].position.y + 0.45;
+            group.position.z = testArray[bustOn].position.z + 0.2;
+            console.log(group);
         }
 
         function checkKey(e) {
@@ -303,8 +314,9 @@
             var halfX = (document.documentElement.clientWidth)/2;
 
             if (layer == "one" && xClick < (halfX + 150) && xClick > (halfX - 150) ){
-                //call function to make layer two on 
+                //call function to make layer two on
                 layer = "two";
+
             } 
             if (layer == "one" && xClick < halfX) {
                 //rotate left
@@ -324,6 +336,12 @@
             }
             
             if (layer == "two" && (xClick < (halfX - 150) || xClick >= (halfX + 150))) {
+                //reset bustOn's y rotation
+                console.log("clicked off so reset rotation");
+                console.log("current: " + testArray[bustOn].rotation.y);
+                console.log("reset to: " + saveBustOnRotPos);
+                testArray[bustOn].rotation.y = saveBustOnRotPos;
+                console.log(testArray[bustOn].rotation.y);
                 //if user clicks off the center bust, it should 
                 //return to revolving busts layer one mode
                 turnOnAllBusts();
@@ -371,7 +389,9 @@
             } else {
                 detectDragging();
                 group.rotation.y += 0.00025;
-                testArray[bustOn].rotation.y += 0.0002;
+                if (autoRotate == true) {
+                    testArray[bustOn].rotation.y += 0.0002;   
+                }
                 // enable UI functionality
                 
             }
@@ -402,6 +422,9 @@
                     closestBust = i;
                 }
             }
+            //store y rotation of selected bust
+            saveBustOnRotPos = testArray[closestBust].rotation.y;
+            console.log("stored bust position once:" + saveBustOnRotPos);
             return closestBust;
             //console.log(closestZ, closestBust);
         }
