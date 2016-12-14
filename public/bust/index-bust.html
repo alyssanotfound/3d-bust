@@ -91,14 +91,8 @@
             backLight = new THREE.DirectionalLight(0xffffff, 1.0);
             backLight.position.set(100, 0, -100).normalize();
 
-            /* Model 1 */
-
-            
-            
-            
             /* Generate 13 busts */
-
-            
+          
             for (var i = numModels - 1; i >= 0; i--) {
                 (function(index){
                     // setTimeout(function(){
@@ -142,7 +136,6 @@
             // controls.dampingFactor = 0.25;
             // controls.enableZoom = false;
 
-
             /* Events */
 
             window.addEventListener('resize', onWindowResize, false);
@@ -150,10 +143,11 @@
 
             //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
             document.addEventListener( 'click', onDocumentClick, false );
+            //document.addEventListener( 'click', detectClickedBust, false );
             document.onkeydown = checkKey;
         }
 
-
+        /* Event Functions */
 
         function checkKey(e) {
 
@@ -212,37 +206,54 @@
 
         function onDocumentClick( event ) {
             event.preventDefault();
+
+
             var xClick = event.clientX;
             var halfX = (document.documentElement.clientWidth)/2;
 
-            if (xClick < halfX) {
-                //rotate left
-                console.log("left");
-                //switch bc we assume if someone clicks on the model 
-                //on the left it should move towards them
-                revolveDirection = "right";
-                findTargetTheta(revolveDirection);
-                revolveClicked = true;
-            } else {
-                //rotate right
-                console.log("right");
-                revolveDirection = "left";
-                findTargetTheta(revolveDirection);
-                revolveClicked = true;
-            }
-            console.log(event.clientX )
-            console.log(halfX);
-        }
-        // function onDocumentMouseDown( event ) {
+            // mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+            // mouse.y = - ( event.clientY / renderer.domElement.clientWidth ) * 2 + 1;
 
-        //     event.preventDefault(); //check what this does
-    
-        //     mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-        //     mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+            //var clickedBusts = detectClickedBust(mouse.x, mouse.y);
             
+            //console.log(clickedBusts);
+            //console.log(xClick);
+            //console.log(halfX - 150);
+            //console.log(halfX + 150);
+
+            if (xClick < (halfX + 150) && xClick > (halfX - 150) ){
+                //call function to make central bust "on"
+                console.log("clicked bust is central, dont rotate"); 
+                pause = true;   
+            } else {
+                //click wasn't on 
+                if (xClick < halfX) {
+                    //rotate left
+                    console.log("left");
+                    //switch bc we assume if someone clicks on the model 
+                    //on the left it should move towards them
+                    revolveDirection = "right";
+                    findTargetTheta(revolveDirection);
+                    revolveClicked = true;
+                } else {
+                    //rotate right
+                    console.log("right");
+                    revolveDirection = "left";
+                    findTargetTheta(revolveDirection);
+                    revolveClicked = true;
+                }
+                //console.log(event.clientX )
+                //console.log(halfX);
+            }  
+        }
+
+        // function detectClickedBust( mousex, mousey ) {
+        //     console.log("checking for clicked bust");
+        //     event.preventDefault(); //check what this does
+
         //     raycaster.setFromCamera( mouse, camera );
         //     var intersects = raycaster.intersectObjects( testArray, true );
-        //     console.log(mouse.x + ", " + mouse.y);
+        //     console.log(mousex + ", " + mousey);
             
 
         //     if ( intersects.length > 0 ) {
@@ -251,37 +262,20 @@
         //         console.log(intersects);
         //         console.log("ID in question: " + intersects[0].object.uuid);
         //         var bustInQuestion = intersects[0].object.uuid;
-        //         var matchingBustNum;
+        //         var matchingBustNum = [];
         //         //find matching bust
         //         for (var i = testArray.length - 1; i >= 0; i--) {
         //             if (bustInQuestion == testArray[i].children[0].uuid){
         //                 console.log("match found: " + i);
-        //                 matchingBustNum = i;
+        //                 matchingBustNum.push(i);
         //             }
         //         }
-        //         console.log(theta);
         //         console.log(matchingBustNum);
-        //         //find theta of actual model that was clicked
-        //         var thisBustTheta = (theta + ((360/numModels) * matchingBustNum));
-        //         //find just decimal
-        //         var thisBustThetaRatio = ((theta + ((360/numModels) * matchingBustNum))/360)%1;
-        //         console.log(thisBustThetaRatio);
-                
-        //         //set theta between 0 and 360 so that
-        //         //busts are still in the same place
-        //         theta = ((theta/360)%1)*360;
-        //         console.log(theta);
-        //         if (thisBustThetaRatio <= 0.25) {
-        //             tgtTheta = Math.round(90 - thisBustTheta);  
-        //         } else if (thisBustThetaRatio > 0.25){
-        //             tgtTheta = Math.round(450 - thisBustTheta);
-        //         }
-        //         //console.log(thisBustTheta);
-        //         console.log(tgtTheta);
-        //         revolveClicked = true;
         //     }
-
+        //     return matchingBustNum;
         // }
+
+        /* Core Animate Render Functions */
 
         function animate() {
             //console.log("inside animate");
@@ -301,6 +295,8 @@
             }
             renderer.render(scene, camera);
         }
+
+        /* Update Frame Functions */
 
         function updateRevolution(direction) {
             var increment = .01; //changes speed
@@ -344,7 +340,7 @@
         }
 
         function rotateOneBustInterval(targetTheta) {
-            console.log("speed up");
+            //console.log("speed up");
             //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
             var increment = .6;
             var pathEllipse = 1;
@@ -360,8 +356,8 @@
 
             var radians = theta * Math.PI / 180;
             var radianPosition = 2*Math.PI/numModels;
-            console.log("theta: " + Math.round(theta));
-            console.log("target theta: " + targetTheta);
+            //console.log("theta: " + Math.round(theta));
+            //console.log("target theta: " + targetTheta);
 
             for (var i = testArray.length - 1; i >= 0; i--) {
                 testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
@@ -375,33 +371,6 @@
             }
 
         }
-
-
-        // function speedRevToClickedBust(targetTheta) {
-        //     console.log("speed up");
-        //     //console.log( "current theta: " + theta + ", target theta: " + targetTheta);
-        //     var increment = .5;
-        //     var pathEllipse = 1;
-        //     theta += increment;
-        //     var radians = theta * Math.PI / 180;
-        //     var radianPosition = 2*Math.PI/numModels;
-        //     console.log("theta: " + Math.round(theta));
-        //     console.log("target theta: " + targetTheta);
-
-        //     for (var i = testArray.length - 1; i >= 0; i--) {
-        //         testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
-        //         testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
-        //         testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
-        //     }
-        //     if (Math.round(theta) == targetTheta) {
-        //         console.log("reached origin");
-        //         pause = true;
-        //         revolveClicked = false;
-        //     }
-
-        // }
-        
-
 
     </script>
 
