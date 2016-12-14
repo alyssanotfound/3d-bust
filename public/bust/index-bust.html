@@ -58,9 +58,16 @@
         var revolveClicked = false;
         var layer = "one";
         var allBustsOn = true;
-
+        var bustOn;
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
+
+        //for rotating bust
+        var isDragging = false;
+        var previousMousePosition = {
+            x: 0,
+            y: 0
+        };
 
         init();
         //animate(); //wait until object is loaded
@@ -75,7 +82,7 @@
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.x = 0.5;
             camera.position.y = 0.2;
-            camera.position.z = 2.7;
+            camera.position.z = 2.9;
 
             /* Scene */
 
@@ -93,6 +100,7 @@
 
             backLight = new THREE.DirectionalLight(0xffffff, 1.0);
             backLight.position.set(100, 0, -100).normalize();
+
 
             /* Generate 13 busts */
           
@@ -144,7 +152,9 @@
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('keydown', onKeyboardEvent, false);
 
-            //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+            document.addEventListener( 'mouseup', onDocumentMouseUp, false );
             document.addEventListener( 'click', onDocumentClick, false );
             //document.addEventListener( 'click', detectClickedBust, false );
             document.onkeydown = checkKey;
@@ -152,27 +162,67 @@
 
         /* Event Functions */
 
+        function onDocumentMouseDown(e) {
+            if (layer == "two" || layer == "three"){
+                console.log("mouse down layer 2 or 3");
+                isDragging = true;   
+            } 
+        }
+
+        function onDocumentMouseMove(e) {
+            if (layer == "two" || layer == "three"){
+                console.log("mouse dragging");
+                var deltaMove = {
+                    x: e.offsetX-previousMousePosition.x,
+                    y: e.offsetY-previousMousePosition.y
+                };
+
+                if(isDragging) {
+                        
+                    var deltaRotationQuaternion = new THREE.Quaternion()
+                        .setFromEuler(new THREE.Euler(
+                            toRadians(deltaMove.y * 1),
+                            toRadians(deltaMove.x * 1),
+                            0,
+                            'XYZ'
+                        ));
+                    
+                    testArray[bustOn].quaternion.multiplyQuaternions(deltaRotationQuaternion, testArray[bustOn].quaternion);
+                }
+                
+                previousMousePosition = {
+                    x: e.offsetX,
+                    y: e.offsetY
+                };
+            }
+        }
+
+        function onDocumentMouseUp(e) {
+            console.log("stop dragging");
+            isDragging = false;
+        }
+
         function add3DInfoButton() {
             /* Geometry */
             var loader = new THREE.TextureLoader();
-            //var texture = loader.load( 'disc.png' );
+            var texture = loader.load( 'disc.png' );
 
             group = new THREE.Group();
             group.name = "mesh_button";
             scene.add( group );
             // points
             var pointsGeometry = new THREE.DodecahedronGeometry( 0.1 );
-            for ( var i = 0; i < pointsGeometry.vertices.length; i ++ ) {
-                //pointsGeometry.vertices[ i ].add( randomPoint().multiplyScalar( 2 ) ); // wiggle the points
-            }
-            // var pointsMaterial = new THREE.PointsMaterial( {
-            //     color: 0xFF33CC,
-            //     map: texture,
-            //     size: 0.1,
-            //     alphaTest: 0.5
-            // } );
-            //var points = new THREE.Points( pointsGeometry, pointsMaterial );
-            //group.add( points );
+            // for ( var i = 0; i < pointsGeometry.vertices.length; i ++ ) {
+            //     //pointsGeometry.vertices[ i ].add( randomPoint().multiplyScalar( 2 ) ); // wiggle the points
+            // }
+            var pointsMaterial = new THREE.PointsMaterial( {
+                color: 0xFF33CC,
+                map: texture,
+                size: 0.03,
+                alphaTest: 0.5
+            } );
+            var points = new THREE.Points( pointsGeometry, pointsMaterial );
+            group.add( points );
             // convex hull
             var meshMaterial = new THREE.MeshLambertMaterial( {
                 color: 0xFF33CC,
@@ -319,22 +369,27 @@
                 //central bust
                 isolateOneBust();
             } else {
-                group.rotation.y += 0.005;
+                detectDragging();
+                group.rotation.y += 0.00025;
+                testArray[bustOn].rotation.y += 0.0002;
                 // enable UI functionality
                 
             }
         }
 
+        function detectDragging() {
+
+        }
+
         function isolateOneBust() {
             //define bustOn to be the center one based on max z position value
-            //console.log(testArray[4]);
             pause = true;
             //find which bust has closest z position
-            var bustOn = findClosestBust();
+            bustOn = findClosestBust();
             turnOffOtherBusts(bustOn); 
             //turn on info button
             add3DInfoButton();
-
+            console.log(testArray[bustOn]);
         }
 
         function findClosestBust() {
@@ -446,6 +501,14 @@
                 revolveClicked = false;
             }
 
+        }
+        //Geometry functions
+        function toRadians(angle) {
+            return angle * (Math.PI / 180);
+        }
+
+        function toDegrees(angle) {
+            return angle * (180 / Math.PI);
         }
 
     </script>
