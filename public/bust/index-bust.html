@@ -12,7 +12,8 @@
     <script src="OrbitControls.js"></script>
     <script src="OBJLoader.js"></script>
     <script src="MTLLoader.js"></script>
-
+    <script src="ConvexGeometry.js"></script>
+    <script src="stats.min.js"></script>
     <style>
         body {
             overflow: hidden;
@@ -56,6 +57,7 @@
         var revolveDirection = "left";
         var revolveClicked = false;
         var layer = "one";
+        var allBustsOn = true;
 
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
@@ -150,17 +152,56 @@
 
         /* Event Functions */
 
+        function add3DInfoButton() {
+            /* Geometry */
+            var loader = new THREE.TextureLoader();
+            //var texture = loader.load( 'disc.png' );
+
+            group = new THREE.Group();
+            group.name = "mesh_button";
+            scene.add( group );
+            // points
+            var pointsGeometry = new THREE.DodecahedronGeometry( 0.1 );
+            for ( var i = 0; i < pointsGeometry.vertices.length; i ++ ) {
+                //pointsGeometry.vertices[ i ].add( randomPoint().multiplyScalar( 2 ) ); // wiggle the points
+            }
+            // var pointsMaterial = new THREE.PointsMaterial( {
+            //     color: 0xFF33CC,
+            //     map: texture,
+            //     size: 0.1,
+            //     alphaTest: 0.5
+            // } );
+            //var points = new THREE.Points( pointsGeometry, pointsMaterial );
+            //group.add( points );
+            // convex hull
+            var meshMaterial = new THREE.MeshLambertMaterial( {
+                color: 0xFF33CC,
+                opacity: 0.3,
+                transparent: true
+            } );
+            var meshGeometry = new THREE.ConvexGeometry( pointsGeometry.vertices );
+            mesh = new THREE.Mesh( meshGeometry, meshMaterial );
+            mesh.material.side = THREE.BackSide; // back faces
+            mesh.renderOrder = 0;
+            group.add( mesh );
+            mesh = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
+            mesh.material.side = THREE.FrontSide; // front faces
+            mesh.renderOrder = 1;
+
+            group.add( mesh );
+        }
+
         function checkKey(e) {
 
             e = e || window.event;
 
             if (e.keyCode == '37') {
-                console.log("left arrow");
+                //console.log("left arrow");
                 revolveDirection = "left";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
             } else if (e.keyCode == '39') {
-                console.log("right arrow");
+                //console.log("right arrow");
                 revolveDirection = "right";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
@@ -217,7 +258,7 @@
             } 
             if (layer == "one" && xClick < halfX) {
                 //rotate left
-                console.log("left");
+                //console.log("left");
                 //switch bc we assume if someone clicks on the model 
                 //on the left it should move towards them
                 revolveDirection = "right";
@@ -226,7 +267,7 @@
                 } 
             if (layer == "one" && xClick >= halfX) {
                 //rotate right
-                console.log("right");
+                //console.log("right");
                 revolveDirection = "left";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
@@ -246,6 +287,7 @@
         function animate() {
             //console.log("inside animate");
             requestAnimationFrame(animate);
+            
             // controls.update();
             render();
 
@@ -261,7 +303,9 @@
             } 
 
             if (layer == "two") {
-                isolateOneBust();
+                //create layer two UI function that calls function below 
+                //only once so that it doesn't run every render
+                layerTwoUI();   
             }
             
             renderer.render(scene, camera);
@@ -269,28 +313,65 @@
 
         /* Update Frame Functions */
 
+        function layerTwoUI() {
+            if (allBustsOn == true) {
+                //initial render call for layer two, so find 
+                //central bust
+                isolateOneBust();
+            } else {
+                group.rotation.y += 0.005;
+                // enable UI functionality
+                
+            }
+        }
+
         function isolateOneBust() {
             //define bustOn to be the center one based on max z position value
             //console.log(testArray[4]);
             pause = true;
-            var bustOn = 4;
+            //find which bust has closest z position
+            var bustOn = findClosestBust();
             turnOffOtherBusts(bustOn); 
+            //turn on info button
+            add3DInfoButton();
 
+        }
+
+        function findClosestBust() {
+            var closestBust;
+            var closestZ = 0;
+            for (var i = testArray.length - 1; i >= 0; i--) {
+                //console.log(testArray[i].position.z);   
+                if (testArray[i].position.z > closestZ) {
+                    closestZ = testArray[i].position.z;
+                    closestBust = i;
+                }
+            }
+            return closestBust;
+            //console.log(closestZ, closestBust);
         }
 
         function turnOffOtherBusts(keepOn) {
             for (var i = testArray.length - 1; i >= 0; i--) {
                 if (i != keepOn) {
                     testArray[i].visible = false;
-                }
-                
+                }     
             }
+            allBustsOn = false;
         }
 
         function turnOnAllBusts() {
+            //turn off mesh info button
+            turnOffMeshButton();
             for (var i = testArray.length - 1; i >= 0; i--) {
                 testArray[i].visible = true;   
             }
+            allBustsOn = true;
+        }
+
+        function turnOffMeshButton() {
+            var selectedObject = scene.getObjectByName(group.name);
+            scene.remove( selectedObject );
         }
 
         function updateRevolution(direction) {
@@ -360,7 +441,7 @@
                 testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
             }
             if (Math.round(theta) == targetTheta) {
-                console.log("reached origin");
+                //console.log("reached origin");
                 pause = true;
                 revolveClicked = false;
             }
