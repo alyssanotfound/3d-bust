@@ -6,6 +6,10 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pokuasi</title>
+    
+    <meta name="description" content="Produced by Crucible.nyc">
+    <meta name="author" content="Pokuasi">
 
     <script src="three.js"></script>
     <script src="Detector.js"></script>
@@ -36,13 +40,18 @@
         #infopanel {
             position: absolute;
             z-index:999999;
-            background-color: #FFF8DC;
-            height: 400px;
-            width: 200px;
+            background-color: #ffe4c4;
             font-family: sans-serif;
             font-size: 8pt;
             padding: 10px;
             display: none;
+        }
+
+        #transparentFrame {
+            position: absolute;
+            z-index:999999;
+            display: none;
+            border: 10px solid rgba(255, 228, 196, .5);
         }
     </style>
 </head>
@@ -57,26 +66,33 @@
 
         var container;
 
+        //not triggered by layer change
         var camera, controls, scene, raycaster, renderer;
-        var mouse = new THREE.Vector2(), INTERSECTED;
         var lighting, ambient, keyLight, fillLight, backLight;
-        var theta = 0;
-        var targetTheta;
+        var windowHalfX = window.innerWidth / 2;
+        var windowHalfY = window.innerHeight / 2;
         var numModels = 13;
         var testArray = [];
+
+        //indicate current layer
+        var layer = "one";
+
+        //check or change with each render, layer 1
+        var theta = 0;
+        var targetTheta;
         var pause = false;
         var revolveDirection = "left";
         var revolveClicked = false;
-        var layer = "one";
-        var allBustsOn = true;
-        var bustOn;
-        var autoRotate = true;
-        var saveBustOnRotPos;
-        var group; //3d button
+        var centerFrame;
+        var frameBorder = 10;
+        //check or change when layer changes
         var firstOpen;
-
-        var windowHalfX = window.innerWidth / 2;
-        var windowHalfY = window.innerHeight / 2;
+        var bustOn;
+        var saveBustOnRotPos;
+        var allBustsOn = true;
+        var autoRotate = true;
+        var group; //3d button
+        var elem; //infopanel
 
         //for rotating bust
         var isDragging = false;
@@ -142,6 +158,7 @@
                 })(i);
             }
 
+            
             /* Vectors */
             raycaster = new THREE.Raycaster();
             /* Renderer */
@@ -174,6 +191,7 @@
             document.addEventListener( 'click', onDocumentClick, false );
             //document.addEventListener( 'click', detectClickedBust, false );
             document.onkeydown = checkKey;
+
         }
 
         /* Event Functions */
@@ -241,8 +259,8 @@
             var pointsGeometry = new THREE.DodecahedronGeometry( 0.03 );
 
             var meshMaterial = new THREE.MeshLambertMaterial( {
-                color: 0xFFCC66,
-                opacity: 0.7,
+                color: 0xffe4c4,
+                opacity: 0.9,
                 transparent: true
             } );
             var meshGeometry = new THREE.ConvexGeometry( pointsGeometry.vertices );
@@ -261,7 +279,7 @@
 
             
             //update position of 
-            console.log(group);
+            //console.log(group);
         }
 
         function checkKey(e) {
@@ -270,15 +288,30 @@
 
             if (e.keyCode == '37') {
                 //console.log("left arrow");
+                addTransparentFrame();
                 revolveDirection = "left";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
             } else if (e.keyCode == '39') {
                 //console.log("right arrow");
+                addTransparentFrame();
                 revolveDirection = "right";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
             }
+        }
+
+        function addTransparentFrame() {
+            //transparent frame
+            centerFrame = document.getElementById('transparentFrame');
+            console.log(centerFrame);
+            
+            centerFrame.style.width = windowHalfX*2/3 + "px";
+            centerFrame.style.height = windowHalfY + "px";
+            centerFrame.style.left = (windowHalfX - ((windowHalfX*2)/6)) - frameBorder + "px";
+            centerFrame.style.top = windowHalfY*2/3 + "px";
+            centerFrame.style.borderWidth = frameBorder;
+            centerFrame.style.display = "block";
         }
 
         function onWindowResize() {
@@ -288,7 +321,13 @@
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-
+            if (document.getElementById('transparentFrame').style.display == "block") {
+                addTransparentFrame();
+            }
+            if (document.getElementById('infopanel').style.display == "block") {
+                openInfoPanel();
+            }
+            
             renderer.setSize(window.innerWidth, window.innerHeight);
 
         }
@@ -327,15 +366,16 @@
             event.preventDefault();
 
             var xClick = event.clientX;
-            var halfX = (document.documentElement.clientWidth)/2;
+            //var halfX = (document.documentElement.clientWidth)/2;
 
-            if (layer == "one" && xClick < (halfX + 150) && xClick > (halfX - 150) ){
+            if (layer == "one" && xClick < (windowHalfX + 150) && xClick > (windowHalfX - 150) ){
                 //call function to make layer two on
                 layer = "two";
-                firstOpen = true;
+                addTransparentFrame(); //in case it wasn't open yet
+                firstOpen = true; //so that this first click doesnt trigger layer 3
 
             } 
-            if (layer == "one" && xClick < halfX) {
+            if (layer == "one" && xClick < windowHalfX) {
                 //rotate left
                 //console.log("left");
                 //switch bc we assume if someone clicks on the model 
@@ -344,7 +384,7 @@
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
                 } 
-            if (layer == "one" && xClick >= halfX) {
+            if (layer == "one" && xClick >= windowHalfX) {
                 //rotate right
                 //console.log("right");
                 revolveDirection = "left";
@@ -354,7 +394,9 @@
             //check if button was clicked
             if (layer == "two" && firstOpen == false) {
                 console.log("check if intersect");
+                var mouse = new THREE.Vector2(), INTERSECTED;
                 raycaster.setFromCamera( mouse, camera );
+                console.log(scene.children);
                 var intersects = raycaster.intersectObjects( scene.children, true );
                 console.log(intersects);
                 if ( intersects.length > 0 ) {
@@ -362,19 +404,21 @@
                     
                     if ( INTERSECTED != intersects[ 0 ].object ) {
                         console.log("intersected, open info panel");
-                        openInfoPanel(halfX);
+                        openInfoPanel();
                     }
                 } 
             }
 
             //clicking off layer two
-            if (layer == "two" && isDragging == false && (xClick < (halfX - 150) || xClick >= (halfX + 150))) {
+            if (layer == "two" && isDragging == false && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 150))) {
                 //reset bustOn's y rotation and scale down
                 console.log("clicked off so reset rotation");
                 console.log("current: " + testArray[bustOn].rotation.y);
                 console.log("reset to: " + saveBustOnRotPos);
                 testArray[bustOn].rotation.y = saveBustOnRotPos;
                 console.log(testArray[bustOn].rotation.y);
+                //turn off frame
+                centerFrame.style.display = "none";
                 //turn off lights
                 turnOffLights();
                 //if user clicks off the center bust, it should 
@@ -385,13 +429,17 @@
             }    
 
             //clicking off layer three
-            if (layer == "three" && isDragging == false && (xClick < (halfX - 150) || xClick >= (halfX + 155 + 200))) {
+            if (layer == "three" && isDragging == false && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 155 + 200))) {
+                var elem = document.getElementById('infopanel');
+                elem.style.display = 'none';
                 //reset bustOn's y rotation and scale down
                 console.log("clicked off so reset rotation");
                 console.log("current: " + testArray[bustOn].rotation.y);
                 console.log("reset to: " + saveBustOnRotPos);
                 testArray[bustOn].rotation.y = saveBustOnRotPos;
                 console.log(testArray[bustOn].rotation.y);
+                //turn off frame
+                centerFrame.style.display = "none";
                 //turn off lights
                 turnOffLights();
                 //if user clicks off the center bust, it should 
@@ -399,8 +447,7 @@
                 turnOnAllBusts();
                 layer = "one";
                 pause = false;
-                var elem = document.getElementById('infopanel');
-                elem.style.display = 'none';
+                
             }  
         }
 
@@ -441,14 +488,17 @@
         /* Update Frame Functions */
 
 
-        function openInfoPanel(WindowMidXpoint) {
+        function openInfoPanel() {
             //define layer as three so this function is only called once
             layer = "three";
             //update so that placement is more accurate
-            var elem = document.getElementById('infopanel');
+            elem = document.getElementById('infopanel');
+            elem.style.padding = frameBorder + "px";
+            elem.style.width = windowHalfX*2/6 + "px";
+            elem.style.height = windowHalfY + "px";
+            elem.style.left = (windowHalfX + ((windowHalfX*2)/6)) + frameBorder + "px";
+            elem.style.top = windowHalfY*2/3 + "px";
             elem.style.display = 'block';
-            elem.style.left = (WindowMidXpoint + 155) + "px";
-            elem.style.top = "175px";
         }
 
         function layerTwoUI() {
@@ -492,7 +542,7 @@
             }
             //store y rotation of selected bust
             saveBustOnRotPos = testArray[closestBust].rotation.y;
-            //console.log("stored bust position once:" + saveBustOnRotPos);
+            console.log("stored bust position once:" + saveBustOnRotPos);
             return closestBust;
             //console.log(closestZ, closestBust);
         }
@@ -603,6 +653,10 @@
         }
 
     </script>
+    <div id="transparentFrame">
+        
+    </div>
+
     <div id="infopanel">
        $$$ // add to cart // like us on myspace  
     </div>
