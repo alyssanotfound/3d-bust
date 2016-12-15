@@ -32,8 +32,19 @@
             left: 0;
             right: 0;
         }
-    </style>
 
+        #infopanel {
+            position: absolute;
+            z-index:999999;
+            background-color: #FFF8DC;
+            height: 400px;
+            width: 200px;
+            font-family: sans-serif;
+            font-size: 8pt;
+            padding: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -138,7 +149,7 @@
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
-            renderer.setClearColor(new THREE.Color("hsla(170, 50%, 45%, 1)"));
+            renderer.setClearColor(new THREE.Color(0xffffff));
             //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
@@ -228,18 +239,7 @@
             scene.add( group );
             // points
             var pointsGeometry = new THREE.DodecahedronGeometry( 0.03 );
-            // for ( var i = 0; i < pointsGeometry.vertices.length; i ++ ) {
-            //     //pointsGeometry.vertices[ i ].add( randomPoint().multiplyScalar( 2 ) ); // wiggle the points
-            // }
-            // var pointsMaterial = new THREE.PointsMaterial( {
-            //     color: 0xFF33CC,
-            //     map: texture,
-            //     size: 0.01,
-            //     alphaTest: 0.5
-            // } );
-            // var points = new THREE.Points( pointsGeometry, pointsMaterial );
-            // group.add( points );
-            // convex hull
+
             var meshMaterial = new THREE.MeshLambertMaterial( {
                 color: 0xFFCC66,
                 opacity: 0.7,
@@ -355,19 +355,14 @@
             if (layer == "two" && firstOpen == false) {
                 console.log("check if intersect");
                 raycaster.setFromCamera( mouse, camera );
-                //var threeDbutton = scene.getObjectByName(group.name);
-                //console.log(scene.children);
                 var intersects = raycaster.intersectObjects( scene.children, true );
                 console.log(intersects);
                 if ( intersects.length > 0 ) {
-                    //change so that you're checking which bust is intersected
+                    //change so that you're checking which object is intersected
                     
                     if ( INTERSECTED != intersects[ 0 ].object ) {
                         console.log("intersected, open info panel");
-                        // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-                        // INTERSECTED = intersects[ 0 ].object;
-                        // INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-                        // INTERSECTED.material.emissive.setHex( 0xff0000 );
+                        openInfoPanel(halfX);
                     }
                 } 
             }
@@ -379,9 +374,6 @@
                 console.log("current: " + testArray[bustOn].rotation.y);
                 console.log("reset to: " + saveBustOnRotPos);
                 testArray[bustOn].rotation.y = saveBustOnRotPos;
-                // testArray[bustOn].scale.x = 1;
-                // testArray[bustOn].scale.y = 1;
-                // testArray[bustOn].scale.z = 1;
                 console.log(testArray[bustOn].rotation.y);
                 //turn off lights
                 turnOffLights();
@@ -391,6 +383,25 @@
                 layer = "one";
                 pause = false;
             }    
+
+            //clicking off layer three
+            if (layer == "three" && isDragging == false && (xClick < (halfX - 150) || xClick >= (halfX + 155 + 200))) {
+                //reset bustOn's y rotation and scale down
+                console.log("clicked off so reset rotation");
+                console.log("current: " + testArray[bustOn].rotation.y);
+                console.log("reset to: " + saveBustOnRotPos);
+                testArray[bustOn].rotation.y = saveBustOnRotPos;
+                console.log(testArray[bustOn].rotation.y);
+                //turn off lights
+                turnOffLights();
+                //if user clicks off the center bust, it should 
+                //return to revolving busts layer one mode
+                turnOnAllBusts();
+                layer = "one";
+                pause = false;
+                var elem = document.getElementById('infopanel');
+                elem.style.display = 'none';
+            }  
         }
 
         /* Core Animate Render Functions */
@@ -419,11 +430,26 @@
                 //only once so that it doesn't run every render
                 layerTwoUI();   
             }
+
+            if (layer == "three") {
+
+            }
             
             renderer.render(scene, camera);
         }
 
         /* Update Frame Functions */
+
+
+        function openInfoPanel(WindowMidXpoint) {
+            //define layer as three so this function is only called once
+            layer = "three";
+            //update so that placement is more accurate
+            var elem = document.getElementById('infopanel');
+            elem.style.display = 'block';
+            elem.style.left = (WindowMidXpoint + 155) + "px";
+            elem.style.top = "175px";
+        }
 
         function layerTwoUI() {
             if (allBustsOn == true) {
@@ -449,9 +475,6 @@
             bustOn = findClosestBust();
             turnOffOtherBusts(bustOn); 
             //scale bustOn
-            // testArray[bustOn].scale.x = 1.5;
-            // testArray[bustOn].scale.y = 1.5;
-            // testArray[bustOn].scale.z = 1.5;
             //turn on info button
             add3DInfoButton();
             //console.log(testArray[bustOn]);
@@ -580,6 +603,8 @@
         }
 
     </script>
-
+    <div id="infopanel">
+       $$$ // add to cart // like us on myspace  
+    </div>
 </body>
 </html>
