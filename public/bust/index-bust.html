@@ -185,9 +185,11 @@
             //was only being used to toggle lights w L so disable
             //window.addEventListener('keydown', onKeyboardEvent, false);
 
+            //for dragging/rotating bust
             document.addEventListener( 'mousedown', onDocumentMouseDown, false );
             document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-            document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+            //document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
             document.addEventListener( 'click', onDocumentClick, false );
             //document.addEventListener( 'click', detectClickedBust, false );
             document.onkeydown = checkKey;
@@ -199,11 +201,18 @@
         function onDocumentMouseDown(e) {
             //console.log(e.clientY, window.innerHeight/2);
             //console.log(e.clientY > window.innerHeight/2);
-            if (layer == "two" || layer == "three"){
+            //find boundaries of frame
+
+            var leftXboundary = ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder);
+            var rightXboundary = leftXboundary + (windowHalfX*2/3);
+            var topBoundary = windowHalfY*2/3;
+            var bottomBoundary = topBoundary + windowHalfY;
+
+            if (layer == "two" || layer == "three" && leftXboundary < e.clientX && e.clientX <= rightXboundary && topBoundary < e.clientY && e.clientY <= bottomBoundary ){
                 //fix so that dragging only works on the bust
                 //var bbox = new THREE.Box3().setFromObject(testArray[bustOn]);
                 //console.log(bbox.size());
-                console.log("mouse down layer 2 or 3");               
+                console.log("mouse down in frame layer 2 or 3");               
                 isDragging = true; 
                 autoRotate = false;  
             } else if ((e.clientY < window.innerHeight/2)){
@@ -239,13 +248,13 @@
             }
         }
 
-        function onDocumentMouseUp(e) {
-            if (layer == "two" || layer == "three"){
-                console.log("stop dragging");
-                isDragging = false;
-                //console.log("after: " + testArray[bustOn].rotation.y); 
-            }
-        }
+        // function onDocumentMouseUp(e) {
+        //     if (layer == "two" || layer == "three"){
+        //         console.log("stop dragging");
+        //         isDragging = false;
+        //         console.log("mouse just went up; isDragging= " + isDragging); 
+        //     }
+        // }
 
         function add3DInfoButton() {
             /* Geometry */
@@ -364,9 +373,8 @@
 
         function onDocumentClick( event ) {
             event.preventDefault();
-
             var xClick = event.clientX;
-            //var halfX = (document.documentElement.clientWidth)/2;
+            
 
             if (layer == "one" && xClick < (windowHalfX + 150) && xClick > (windowHalfX - 150) ){
                 //call function to make layer two on
@@ -391,26 +399,47 @@
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
             }
-            //check if button was clicked
-            if (layer == "two" && firstOpen == false) {
-                console.log("check if intersect");
-                var mouse = new THREE.Vector2(), INTERSECTED;
-                raycaster.setFromCamera( mouse, camera );
-                console.log(scene.children);
-                var intersects = raycaster.intersectObjects( scene.children, true );
-                console.log(intersects);
-                if ( intersects.length > 0 ) {
-                    //change so that you're checking which object is intersected
+
+             //if click is on layer two or three, 
+            if (isDragging == true) {
+                console.log("stop dragging");
+                isDragging = false;
+                console.log("mouse just went up; isDragging= " + isDragging);
+            } 
+
+            if (layer == "two" && firstOpen == false) { 
+                //fake out - make clickable region above frame where button is
+                var leftXboundary = ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder);
+                var rightXboundary = leftXboundary + (windowHalfX*2/3);
+                var topBoundary = windowHalfY*1/2;
+                var bottomBoundary = windowHalfY*2/3;
+                console.log(leftXboundary, rightXboundary);
+                console.log(topBoundary, bottomBoundary);
+                console.log(event.clientX, event.clientY);
+                if (leftXboundary < event.clientX && event.clientX < rightXboundary && topBoundary < event.clientY && event.clientY < bottomBoundary ){
+                    console.log("clicked above frame");
+                    openInfoPanel();
+                }
+                //console.log("check if intersect");
+                // var mouse = new THREE.Vector2(), INTERSECTED;
+                // raycaster.setFromCamera( mouse, camera );
+                // //console.log(scene.children);
+                // var intersects = raycaster.intersectObjects( scene.children, true );
+                // console.log(intersects);
+                // if ( intersects.length > 0 ) {
+                //     //change so that you're checking which object is intersected
                     
-                    if ( INTERSECTED != intersects[ 0 ].object ) {
-                        console.log("intersected, open info panel");
-                        openInfoPanel();
-                    }
-                } 
+                //     if ( INTERSECTED != intersects[ 0 ].object ) {
+                //         console.log("intersected, open info panel");
+                //         openInfoPanel();
+                //     }
+                // } 
             }
 
+
+
             //clicking off layer two
-            if (layer == "two" && isDragging == false && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 150))) {
+            if (layer == "two" && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 150))) {
                 //reset bustOn's y rotation and scale down
                 console.log("clicked off so reset rotation");
                 console.log("current: " + testArray[bustOn].rotation.y);
@@ -429,7 +458,7 @@
             }    
 
             //clicking off layer three
-            if (layer == "three" && isDragging == false && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 155 + 200))) {
+            if (layer == "three" && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 155 + 200))) {
                 var elem = document.getElementById('infopanel');
                 elem.style.display = 'none';
                 //reset bustOn's y rotation and scale down
@@ -499,6 +528,8 @@
             elem.style.left = (windowHalfX + ((windowHalfX*2)/6)) + frameBorder + "px";
             elem.style.top = windowHalfY*2/3 + "px";
             elem.style.display = 'block';
+            //disable 3D button
+            scene.remove(group);
         }
 
         function layerTwoUI() {
