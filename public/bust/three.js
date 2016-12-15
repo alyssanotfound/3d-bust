@@ -8455,7 +8455,7 @@ THREE.Layers.prototype = {
 			for ( var i = 0, l = objects.length; i < l; i ++ ) {
 
 				intersectObject( objects[ i ], this, intersects, recursive );
-
+				
 			}
 
 			intersects.sort( ascSort );
