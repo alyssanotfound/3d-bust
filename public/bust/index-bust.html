@@ -101,6 +101,13 @@
             y: 0
         };
 
+        //calculate frame and info box position
+        var frameLeft = (windowHalfX - (windowHalfX*1/3) - frameBorder);
+        var frameWidth = (windowHalfX*1/2);
+        var panelWidth = (windowHalfX*1/3);
+        var frameTop = (windowHalfY*2/3) + 15;
+        var frameHeight = windowHalfY;
+
         init();
         //animate(); //wait until object is loaded
 
@@ -315,10 +322,10 @@
             centerFrame = document.getElementById('transparentFrame');
             console.log(centerFrame);
             
-            centerFrame.style.width = windowHalfX*2/3 + "px";
+            centerFrame.style.width = frameWidth + "px";
             centerFrame.style.height = windowHalfY + "px";
-            centerFrame.style.left = (windowHalfX - ((windowHalfX*2)/6)) - frameBorder + "px";
-            centerFrame.style.top = windowHalfY*2/3 + "px";
+            centerFrame.style.left = frameLeft + "px";
+            centerFrame.style.top = frameTop + "px";
             centerFrame.style.borderWidth = frameBorder;
             centerFrame.style.display = "block";
         }
@@ -439,45 +446,67 @@
 
 
             //clicking off layer two
-            if (layer == "two" && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 150))) {
+            if (layer == "two" && (xClick < ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder) || xClick >= (((windowHalfX - ((windowHalfX*2)/6)) - frameBorder) + windowHalfX*2/3))) {
+
+                goBackToLayerOne();
                 //reset bustOn's y rotation and scale down
-                console.log("clicked off so reset rotation");
-                console.log("current: " + testArray[bustOn].rotation.y);
-                console.log("reset to: " + saveBustOnRotPos);
-                testArray[bustOn].rotation.y = saveBustOnRotPos;
-                console.log(testArray[bustOn].rotation.y);
-                //turn off frame
-                centerFrame.style.display = "none";
-                //turn off lights
-                turnOffLights();
-                //if user clicks off the center bust, it should 
-                //return to revolving busts layer one mode
-                turnOnAllBusts();
-                layer = "one";
-                pause = false;
+                // console.log("clicked off so reset rotation");
+                // console.log("current: " + testArray[bustOn].rotation.y);
+                // console.log("reset to: " + saveBustOnRotPos);
+                // testArray[bustOn].rotation.y = saveBustOnRotPos;
+                // console.log(testArray[bustOn].rotation.y);
+                // //turn off frame
+                // centerFrame.style.display = "none";
+                // //turn off lights
+                // turnOffLights();
+                // //if user clicks off the center bust, it should 
+                // //return to revolving busts layer one mode
+                // turnOnAllBusts();
+                // layer = "one";
+                // pause = false;
             }    
 
             //clicking off layer three
-            if (layer == "three" && (xClick < (windowHalfX - 150) || xClick >= (windowHalfX + 155 + 200))) {
-                var elem = document.getElementById('infopanel');
-                elem.style.display = 'none';
-                //reset bustOn's y rotation and scale down
-                console.log("clicked off so reset rotation");
-                console.log("current: " + testArray[bustOn].rotation.y);
-                console.log("reset to: " + saveBustOnRotPos);
-                testArray[bustOn].rotation.y = saveBustOnRotPos;
-                console.log(testArray[bustOn].rotation.y);
-                //turn off frame
-                centerFrame.style.display = "none";
-                //turn off lights
-                turnOffLights();
-                //if user clicks off the center bust, it should 
-                //return to revolving busts layer one mode
-                turnOnAllBusts();
-                layer = "one";
-                pause = false;
+            if (layer == "three" && (xClick < ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder) || xClick >= ((windowHalfX + ((windowHalfX*2)/6)) + frameBorder + windowHalfX*2/6))) {
+                
+                goBackToLayerOne();
+                // var elem = document.getElementById('infopanel');
+                // elem.style.display = 'none';
+                // //reset bustOn's y rotation and scale down
+                // console.log("clicked off so reset rotation");
+                // console.log("current: " + testArray[bustOn].rotation.y);
+                // console.log("reset to: " + saveBustOnRotPos);
+                // testArray[bustOn].rotation.y = saveBustOnRotPos;
+                // console.log(testArray[bustOn].rotation.y);
+                // //turn off frame
+                // centerFrame.style.display = "none";
+                // //turn off lights
+                // turnOffLights();
+                // //if user clicks off the center bust, it should 
+                // //return to revolving busts layer one mode
+                // turnOnAllBusts();
+                // layer = "one";
+                // pause = false;
                 
             }  
+        }
+
+        function goBackToLayerOne() {
+            console.log("clicked off so reset rotation");
+            console.log("current: " + testArray[bustOn].rotation.y);
+            console.log("reset to: " + saveBustOnRotPos);
+            testArray[bustOn].rotation.y = saveBustOnRotPos;
+            console.log(testArray[bustOn].rotation.y);
+            //turn off frame
+            centerFrame.style.display = "none";
+            elem.style.display = "none";
+            //turn off lights
+            turnOffLights();
+            //if user clicks off the center bust, it should 
+            //return to revolving busts layer one mode
+            turnOnAllBusts();
+            layer = "one";
+            pause = false;
         }
 
         /* Core Animate Render Functions */
@@ -523,10 +552,10 @@
             //update so that placement is more accurate
             elem = document.getElementById('infopanel');
             elem.style.padding = frameBorder + "px";
-            elem.style.width = windowHalfX*2/6 + "px";
+            elem.style.width = panelWidth + "px";
             elem.style.height = windowHalfY + "px";
-            elem.style.left = (windowHalfX + ((windowHalfX*2)/6)) + frameBorder + "px";
-            elem.style.top = windowHalfY*2/3 + "px";
+            elem.style.left = frameLeft + frameWidth + 2*frameBorder + "px";
+            elem.style.top = frameTop + "px";
             elem.style.display = 'block';
             //disable 3D button
             scene.remove(group);
