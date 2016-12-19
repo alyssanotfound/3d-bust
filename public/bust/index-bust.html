@@ -85,12 +85,12 @@
         var revolveClicked = false;
         var centerFrame;
         var frameBorder = 10;
-        var firstRevolve = "true";
+        var firstRevolve = true;
 
         //check or change when layer changes
         var firstOpen;
         var bustOn;
-        var saveBustOnRotPos;
+        //var saveBustOnRotPos;
         var allBustsOn = true;
         var autoRotate = true;
         var group; //3d button
@@ -379,7 +379,7 @@
         function onDocumentClick( event ) {
             event.preventDefault();
             var xClick = event.clientX;
-            console.log(xClick);
+            //console.log(xClick);
 
             if (layer == "one" && (xClick < (frameLeft + frameWidth)) && (xClick > frameLeft) ){
                 //call function to make layer two on
@@ -445,8 +445,10 @@
         }
 
         function goBackToLayerOne() {
-            testArray[bustOn].rotation.y = saveBustOnRotPos;
-            //console.log(testArray[bustOn].rotation.y);
+            //console.log("current position: " + testArray[bustOn].rotation.y);
+            //console.log("reset back to original: " + saveBustOnRotPos); 
+            //testArray[bustOn].rotation.y = (saveBustOnRotPos);
+            //console.log("should match both lines above" + testArray[bustOn].rotation.y);
             //turn off frame
             centerFrame.style.display = "none";
             if (elem) {
@@ -457,9 +459,14 @@
             //if user clicks off the center bust, it should 
             //return to revolving busts layer one mode
             turnOnAllBusts();
-            firstRevolve = "true";
+            autoRotate = true;
+            firstRevolve = true;
+            console.log("before going to layer 1: " + testArray[bustOn].rotation.y);
+            revolveDirection = "left";
             layer = "one";
+            console.log("after on layer 1: " + testArray[bustOn].rotation.y);
             pause = false;
+
         }
 
         /* Core Animate Render Functions */
@@ -476,6 +483,7 @@
         function render() {
             if (pause == false && layer == "one") {
                 updateRevolution(revolveDirection);   
+                //console.log("revolve Direction: " + revolveDirection);
             } 
 
             if (revolveClicked == true && layer == "one") {
@@ -523,7 +531,8 @@
             } else {
                 group.rotation.y += 0.00025;
                 if (autoRotate == true) {
-                    testArray[bustOn].rotation.y += 0.0002;   
+                    testArray[bustOn].rotation.y -= 0.0002;   
+                    //console.log(testArray[bustOn].rotation.y);
                 }
                 // enable UI functionality
                 
@@ -554,8 +563,8 @@
                 }
             }
             //store y rotation of selected bust
-            saveBustOnRotPos = testArray[closestBust].rotation.y;
-            console.log("stored bust position once:" + saveBustOnRotPos);
+            //saveBustOnRotPos = testArray[closestBust].rotation.y;
+            //console.log("stored bust position once:" + saveBustOnRotPos);
             return closestBust;
             //console.log(closestZ, closestBust);
         }
@@ -606,7 +615,7 @@
                 for (var i = testArray.length - 1; i >= 0; i--) {
                     testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
                     testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
-                    testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+                    //testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
                 }
             }
         }
@@ -615,8 +624,8 @@
             console.log(theta);
             //check if it is the first user input to revolve 
             //for some reason targetTheta is too big so reduce 
-            var incrementTheta = (360/numModels) - 5;
-            // if (firstRevolve == "true") {
+            var incrementTheta = (360/numModels);
+            // if (firstRevolve == true) {
             //     findTargetThetaCentering();
             // } 
 
