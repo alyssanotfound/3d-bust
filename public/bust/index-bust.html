@@ -78,7 +78,8 @@
         var layer = "one";
 
         //check or change with each render, layer 1
-        var theta = 1;
+        var initialtheta = (1/3)*(360/numModels);
+        var theta = initialtheta;
         var targetTheta;
         var pause = false;
         var revolveDirection = "left";
@@ -122,9 +123,9 @@
 
             /* Camera */
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.x = 0.5;
-            camera.position.y = 0.2;
+            camera.position.y = 0.05;
             camera.position.z = 2.9;
 
             /* Scene */
@@ -177,7 +178,7 @@
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
-            renderer.setClearColor(new THREE.Color(0xffffff));
+            renderer.setClearColor(new THREE.Color(0x2a6489)); //2a6489
             //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
@@ -325,7 +326,7 @@
             centerFrame.style.left = frameLeft + "px";
             centerFrame.style.top = frameTop + "px";
             centerFrame.style.borderWidth = frameBorder;
-            centerFrame.style.display = "block";
+            centerFrame.style.display = "none";
         }
 
         function onWindowResize() {
@@ -481,6 +482,7 @@
         }
 
         function render() {
+            //console.log(theta);
             if (pause == false && layer == "one") {
                 updateRevolution(revolveDirection);   
                 //console.log("revolve Direction: " + revolveDirection);
@@ -625,9 +627,9 @@
             //check if it is the first user input to revolve 
             //for some reason targetTheta is too big so reduce 
             var incrementTheta = (360/numModels);
-            // if (firstRevolve == true) {
-            //     findTargetThetaCentering();
-            // } 
+            if (firstRevolve == true) {
+                findTargetThetaCentering();
+            } 
 
             if (theta > 0 && revolveDirection == "left") {
                 targetTheta = Math.round(theta + incrementTheta);
@@ -657,15 +659,25 @@
             console.log("target theta: " + targetTheta);
             firstRevolve = false;
         }
+ 
+        // function findRemainderTheta() {
+        //     var num = (theta/360);
+        //     console.log("curr theta / 360: " + num);
+        //     var roundedNum = Math.floor(num);
+        //     console.log("rounded down: " +roundedNum);
+        //     var remainder = ((num - roundedNum) * 360) - initialtheta;
+        //     //var remainder = ((num - roundedNum) * 360);
+        //     console.log("(decimal * 360): " + remainder);
+        //     return remainder;
+        // }
 
-        //find why this is throwing error 
         function findRemainderTheta() {
-            var num = (theta/360);
-            console.log("curr theta / 360: " + num);
+            var thetaNow = theta - initialtheta;
+            var num = (thetaNow/(360/13)); 
             var roundedNum = Math.floor(num);
-            console.log("rounded down: " +roundedNum);
-            var remainder = ((num - roundedNum) * 360)+ (180/numModels);
-            console.log("decimal * 360: " +remainder);
+            var remainder = (num - roundedNum)*(360/13);
+            //remainder will be the number of degrees to move to reach an interval value
+            console.log("(decimal * 360/13): " + remainder);
             return remainder;
         }
 
