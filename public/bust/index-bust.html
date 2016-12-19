@@ -40,11 +40,27 @@
         #infopanel {
             position: absolute;
             z-index:999999;
-            background-color: #ffe4c4;
+            background-color: #b6b6b2;
+            width: 200px;
+            height: 450px;
+            right: 0px;
             font-family: sans-serif;
             font-size: 8pt;
             padding: 10px;
             display: none;
+        }
+
+        #infopanel h1 {
+            font-size: 8pt;
+        }
+
+        #infopanel h2 {
+            font-size: 8pt;
+        }
+
+        #infopanel img {
+
+            width: 100%;
         }
 
         #transparentFrame {
@@ -85,7 +101,6 @@
         var revolveDirection = "left";
         var revolveClicked = false;
         var centerFrame;
-        var frameBorder = 10;
         var firstRevolve = true;
 
         //check or change when layer changes
@@ -103,11 +118,15 @@
             y: 0
         };
 
+        var frameBorder = 10;
         var frameLeft = (0.5*windowHalfX) - frameBorder;
         var frameWidth = (windowHalfX);
-        var panelWidth = (windowHalfX*1/3);
         var frameTop = windowHalfY*2*0.1;
         var frameHeight = windowHalfY*2*0.8;
+
+        //info panel
+        var panelWidth = (windowHalfX*1/3);
+        var panelHeight = (windowHalfX*2/3);
 
         init();
 
@@ -171,7 +190,7 @@
 
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
+            renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
             //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
@@ -198,17 +217,27 @@
 
         function onDocumentMouseDown(e) {
             //find boundaries of frame
-            var leftXboundary = ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder);
-            var rightXboundary = leftXboundary + (windowHalfX*2/3);
-            var topBoundary = windowHalfY*2/3;
-            var bottomBoundary = topBoundary + windowHalfY;
+            // var leftXboundary = ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder);
+            // var rightXboundary = leftXboundary + (windowHalfX*2/3);
+            // var topBoundary = windowHalfY*2/3;
+            // var bottomBoundary = topBoundary + windowHalfY;
 
-            if ((layer == "two") && (leftXboundary < e.clientX) && (e.clientX <= rightXboundary) && (topBoundary < e.clientY) && (e.clientY <= bottomBoundary) ){               
+            // var frameLeft = (0.5*windowHalfX) - frameBorder;
+            // var frameWidth = (windowHalfX);
+            // var panelWidth = (windowHalfX*1/3);
+            // var panelHeight = (windowHalfX*2/3);
+            // var frameTop = windowHalfY*2*0.1;
+            // var frameHeight = windowHalfY*2*0.8;
+            // console.log("mouse down");
+            // console.log("coords: " + e.clientX + ", " + e.clientY);
+            // console.log("mouse is horiz between: " + frameLeft + ", " + (frameLeft+frameWidth));  
+            // console.log("mouse is vert between: " + frameTop + ", " + (frameTop + panelHeight));     
+            // console.log("NOT dragging");
+            if ((layer == "two") && (e.clientX > frameLeft) && (e.clientX <= (frameLeft + frameWidth)) && (e.clientY > frameTop) && (e.clientY <= (frameTop + frameHeight)) ){  
+                //console.log("dragging");    
                 isDragging = true; 
                 autoRotate = false;  
-            } else if ((e.clientY < window.innerHeight/2)){
-                //mouse is too high to rotate bust
-            }
+            } 
         }
 
         function onDocumentMouseMove(e) {
@@ -267,8 +296,16 @@
             windowHalfX = window.innerWidth / 2;
             windowHalfY = window.innerHeight / 2;
 
+            frameLeft = (0.5*windowHalfX) - frameBorder;
+            frameWidth = (windowHalfX);
+            panelWidth = (windowHalfX*1/3);
+            panelHeight = (windowHalfX*2/3);
+            frameTop = windowHalfY*2*0.1;
+            frameHeight = windowHalfY*2*0.8;
+
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
+
             if (document.getElementById('transparentFrame').style.display == "block") {
                 addTransparentFrame();
             }
@@ -300,6 +337,7 @@
 
             if (layer == "one" && (xClick < (1.5*windowHalfX)) && (xClick > (0.5*windowHalfX)) ){
                 layer = "two";
+                addTransparentFrame();
                 firstOpen = true; //so that this first click doesnt trigger layer 3
 
             } 
@@ -378,11 +416,11 @@
                 console.log("info panel mouse down");
                 infoPanelPressed = true;
             };
-            elem.style.padding = frameBorder + "px";
-            elem.style.width = panelWidth + "px";
-            elem.style.height = windowHalfY + "px";
-            elem.style.left = frameLeft + frameWidth + 2*frameBorder + "px";
-            elem.style.top = frameTop + "px";
+            // elem.style.padding = frameBorder + "px";
+            // elem.style.width = panelWidth + "px";
+            // elem.style.height = panelHeight + "px";
+            // elem.style.left = frameLeft + frameWidth + 2*frameBorder + "px";
+            // elem.style.top = frameTop + "px";
             elem.style.display = 'block';
         }
 
@@ -525,7 +563,22 @@
     </div>
 
     <div id="infopanel">
-       $$$ // add to cart // like us on myspace  
+        <h1>AO-09</h1>
+        <h2>Material: Brass</h2>
+        Production by <a href="http://crucible.nyc">Crucible</a><br>
+        Casted by: Tony Owusu<br>
+        Chain made by: James Aidoo
+        <br><br>
+        Dimensions: 
+        <br><br>
+        Quantity: 
+        <br><br>
+        <button>Add to Cart</button>
+        <br><br>
+        <img src="assets/2d-scan.png">
+         
+
+         
     </div>
 </body>
 </html>
