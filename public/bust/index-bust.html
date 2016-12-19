@@ -91,10 +91,11 @@
         //check or change when layer changes
         var firstOpen;
         var bustOn;
+        var infoPanelPressed = false;
         //var saveBustOnRotPos;
         var allBustsOn = true;
         var autoRotate = true;
-        var group; //3d button
+        //var group; //3d button
         var elem; //infopanel
 
         //for rotating bust
@@ -105,13 +106,21 @@
         };
 
         //calculate frame and info box position
-        var frameLeft = (windowHalfX - (windowHalfX*1/3) - frameBorder);
-        //var frameLeft = windowHalfX;
+        // var frameLeft = (windowHalfX - (windowHalfX*1/3) - frameBorder);
+        // //var frameLeft = windowHalfX;
+        // //var frameWidth = 2;
+        // var frameWidth = (windowHalfX*2/3);
+        // var panelWidth = (windowHalfX*1/3);
+        // var frameTop = (windowHalfY*2/3) + 15;
+        // var frameHeight = windowHalfY;
+
+        //var frameLeft;
+        var frameLeft = (0.5*windowHalfX) - frameBorder;
         //var frameWidth = 2;
-        var frameWidth = (windowHalfX*2/3);
+        var frameWidth = (windowHalfX);
         var panelWidth = (windowHalfX*1/3);
-        var frameTop = (windowHalfY*2/3) + 15;
-        var frameHeight = windowHalfY;
+        var frameTop = windowHalfY*2*0.1;
+        var frameHeight = windowHalfY*2*0.8;
 
         init();
         //animate(); //wait until object is loaded
@@ -123,9 +132,9 @@
 
             /* Camera */
 
-            camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 1, 1000);
+            camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.x = 0.5;
-            camera.position.y = 0.05;
+            camera.position.y = 0.08;
             camera.position.z = 2.9;
 
             /* Scene */
@@ -170,15 +179,17 @@
                 })(i);
             }
 
-            
+            scene.updateMatrixWorld(true); //so we are able to get global coords of obj
+
             /* Vectors */
             raycaster = new THREE.Raycaster();
+
             /* Renderer */
 
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth*.9, window.innerHeight*.9);
-            renderer.setClearColor(new THREE.Color(0x2a6489)); //2a6489
+            renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
             //console.log(renderer.domElement);
             container.appendChild(renderer.domElement);
 
@@ -205,6 +216,12 @@
             document.addEventListener( 'click', onDocumentClick, false );
             //document.addEventListener( 'click', detectClickedBust, false );
             document.onkeydown = checkKey;
+            
+            // elem.onmousedown = function () {
+            //     console.log("info panel clicked");
+            //     return true; // Not needed, as long as you don't return false
+            // };
+
 
         }
 
@@ -220,7 +237,7 @@
             var topBoundary = windowHalfY*2/3;
             var bottomBoundary = topBoundary + windowHalfY;
 
-            if ((layer == "two" || layer == "three") && (leftXboundary < e.clientX) && (e.clientX <= rightXboundary) && (topBoundary < e.clientY) && (e.clientY <= bottomBoundary) ){
+            if ((layer == "two") && (leftXboundary < e.clientX) && (e.clientX <= rightXboundary) && (topBoundary < e.clientY) && (e.clientY <= bottomBoundary) ){
                 //fix so that dragging only works on the bust
                 //var bbox = new THREE.Box3().setFromObject(testArray[bustOn]);
                 //console.log(bbox.size());
@@ -233,7 +250,7 @@
         }
 
         function onDocumentMouseMove(e) {
-            if (layer == "two" || layer == "three"){
+            if (layer == "two"){
                 //console.log("mouse dragging");
                 var deltaMove = {
                     x: e.offsetX-previousMousePosition.x,
@@ -260,40 +277,40 @@
             }
         }
 
-        function add3DInfoButton() {
-            /* Geometry */
-            var loader = new THREE.TextureLoader();
-            var texture = loader.load( 'disc.png' );
+        // function add3DInfoButton() {
+        //     /* Geometry */
+        //     var loader = new THREE.TextureLoader();
+        //     var texture = loader.load( 'disc.png' );
 
             
-            group.name = "mesh_button";
-            scene.add( group );
-            // points
-            var pointsGeometry = new THREE.DodecahedronGeometry( 0.03 );
+        //     group.name = "mesh_button";
+        //     scene.add( group );
+        //     // points
+        //     var pointsGeometry = new THREE.DodecahedronGeometry( 0.03 );
 
-            var meshMaterial = new THREE.MeshLambertMaterial( {
-                color: 0xffe4c4,
-                opacity: 0.9,
-                transparent: true
-            } );
-            var meshGeometry = new THREE.ConvexGeometry( pointsGeometry.vertices );
-            mesh = new THREE.Mesh( meshGeometry, meshMaterial );
-            mesh.material.side = THREE.BackSide; // back faces
-            mesh.renderOrder = 0;
-            group.add( mesh );
-            mesh = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
-            mesh.material.side = THREE.FrontSide; // front faces
-            mesh.renderOrder = 1;
+        //     var meshMaterial = new THREE.MeshLambertMaterial( {
+        //         color: 0xffe4c4,
+        //         opacity: 0.9,
+        //         transparent: true
+        //     } );
+        //     var meshGeometry = new THREE.ConvexGeometry( pointsGeometry.vertices );
+        //     mesh = new THREE.Mesh( meshGeometry, meshMaterial );
+        //     mesh.material.side = THREE.BackSide; // back faces
+        //     mesh.renderOrder = 0;
+        //     group.add( mesh );
+        //     mesh = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
+        //     mesh.material.side = THREE.FrontSide; // front faces
+        //     mesh.renderOrder = 1;
 
-            group.add( mesh );
-            group.position.x = testArray[bustOn].position.x;
-            group.position.y = testArray[bustOn].position.y + 0.45;
-            group.position.z = testArray[bustOn].position.z + 0.2;
+        //     group.add( mesh );
+        //     group.position.x = testArray[bustOn].position.x;
+        //     group.position.y = testArray[bustOn].position.y + 0.45;
+        //     group.position.z = testArray[bustOn].position.z + 0.2;
 
             
-            //update position of 
-            //console.log(group);
-        }
+        //     //update position of 
+        //     //console.log(group);
+        // }
 
         function checkKey(e) {
 
@@ -301,7 +318,7 @@
 
             if (e.keyCode == '37') {
                 //console.log("left arrow");
-                addTransparentFrame();
+                //addTransparentFrame();
                 revolveDirection = "left";
                 //console.log(theta);
 
@@ -309,7 +326,7 @@
                 revolveClicked = true;
             } else if (e.keyCode == '39') {
                 //console.log("right arrow");
-                addTransparentFrame();
+                //addTransparentFrame();
                 revolveDirection = "right";
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
@@ -319,15 +336,42 @@
         function addTransparentFrame() {
             //transparent frame
             centerFrame = document.getElementById('transparentFrame');
-            //console.log(centerFrame);
+            //var vertAxisThruBust = toScreenPosition(testArray[bustOn], camera).x;
+            //frameLeft = vertAxisThruBust - frameWidth;
+            //console.log(toScreenPosition(testArray[bustOn], camera).x);
+            // if (vertAxisThruBust < windowHalfX) { //then bust is more left
+            //     frameLeft = 
+            // }
+            //console.log(vertAxisThruBust);
+
             
             centerFrame.style.width = frameWidth + "px";
-            centerFrame.style.height = windowHalfY + "px";
+            centerFrame.style.height = frameHeight + "px";
             centerFrame.style.left = frameLeft + "px";
             centerFrame.style.top = frameTop + "px";
             centerFrame.style.borderWidth = frameBorder;
-            centerFrame.style.display = "none";
+            centerFrame.style.display = "block";
         }
+
+        // function toScreenPosition(obj, camera) {
+        //     var vector = new THREE.Vector3();
+
+        //     var widthHalf = 0.5*renderer.context.canvas.width;
+        //     var heightHalf = 0.5*renderer.context.canvas.height;
+
+        //     obj.updateMatrixWorld();
+        //     vector.setFromMatrixPosition(obj.matrixWorld);
+        //     vector.project(camera);
+
+        //     vector.x = ( vector.x * widthHalf ) + widthHalf;
+        //     vector.y = - ( vector.y * heightHalf ) + heightHalf;
+
+        //     return { 
+        //         x: vector.x,
+        //         y: vector.y
+        //     };
+
+        // };
 
         function onWindowResize() {
 
@@ -382,10 +426,11 @@
             var xClick = event.clientX;
             //console.log(xClick);
 
-            if (layer == "one" && (xClick < (frameLeft + frameWidth)) && (xClick > frameLeft) ){
+            if (layer == "one" && (xClick < (1.5*windowHalfX)) && (xClick > (0.5*windowHalfX)) ){
                 //call function to make layer two on
                 layer = "two";
-                addTransparentFrame(); //in case it wasn't open yet
+                //addTransparentFrame();
+                //openInfoPanel();
                 firstOpen = true; //so that this first click doesnt trigger layer 3
 
             } 
@@ -395,7 +440,7 @@
                 //switch bc we assume if someone clicks on the model 
                 //on the left it should move towards them
                 revolveDirection = "right";
-                addTransparentFrame();
+                //addTransparentFrame();
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
                 } 
@@ -403,7 +448,7 @@
                 //rotate right
                 //console.log("right");
                 revolveDirection = "left";
-                addTransparentFrame();
+                //addTransparentFrame();
                 findTargetTheta(revolveDirection);
                 revolveClicked = true;
             }
@@ -415,34 +460,39 @@
                 //console.log("mouse just went up; isDragging= " + isDragging);
             } 
 
-            if (layer == "two" && firstOpen == false) { 
-                //fake out - make clickable region above frame where button is
-                var leftXboundary = frameLeft;
-                var rightXboundary = frameLeft + frameWidth;
-                var topBoundary = frameTop - (0.3*frameWidth);
-                var bottomBoundary = frameTop;
-                if ((leftXboundary < event.clientX) && (event.clientX < rightXboundary) && (topBoundary < event.clientY) && (event.clientY < bottomBoundary) ){
-                    //console.log("clicked above frame");
-                    openInfoPanel();
-                }
-            }
+            // if (layer == "two" && firstOpen == false) { 
+            //     //fake out - make clickable region above frame where button is
+            //     var leftXboundary = frameLeft;
+            //     var rightXboundary = frameLeft + frameWidth;
+            //     var topBoundary = frameTop - (0.3*frameWidth);
+            //     var bottomBoundary = frameTop;
+            //     if ((leftXboundary < event.clientX) && (event.clientX < rightXboundary) && (topBoundary < event.clientY) && (event.clientY < bottomBoundary) ){
+            //         //console.log("clicked above frame");
+            //         openInfoPanel();
+            //     }
+            // }
 
 
 
             //clicking off layer two
-            if (layer == "two" && ( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder)) ) ) {
-                console.log("clicked off from layer 2");
-                goBackToLayerOne();
-            }    
+            // if (layer == "two" && ( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder)) ) ) {
+            //     console.log("clicked off from layer 2");
+            //     goBackToLayerOne();
+            // }    
 
             //clicking off layer three. add multiples of frameBorder to account for padding
             //and borders
             //console.log(xClick);
-            if (layer == "three" && ( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (4*frameBorder) + panelWidth) ) ) {
-                console.log("clicked off from layer 3");
-                goBackToLayerOne();
-                
-            }  
+            if (layer == "two") {
+                //check if elem was pressed, not if it exists
+                if (infoPanelPressed == true) {
+                    console.log("info panel pressed, do something, don't go to layer 1"); 
+                    infoPanelPressed = false;  
+                } else if (( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder) ) ) ) {
+                    //console.log("clicked off from layer two");
+                    goBackToLayerOne();
+                } 
+            }
         }
 
         function goBackToLayerOne() {
@@ -451,21 +501,24 @@
             //testArray[bustOn].rotation.y = (saveBustOnRotPos);
             //console.log("should match both lines above" + testArray[bustOn].rotation.y);
             //turn off frame
-            centerFrame.style.display = "none";
+            
+            if (centerFrame) {
+                centerFrame.style.display = "none";   
+            }
             if (elem) {
                 elem.style.display = "none";   
             }
             //turn off lights
-            turnOffLights();
+            //turnOffLights();
             //if user clicks off the center bust, it should 
             //return to revolving busts layer one mode
             turnOnAllBusts();
             autoRotate = true;
             firstRevolve = true;
-            console.log("before going to layer 1: " + testArray[bustOn].rotation.y);
+            //console.log("before going to layer 1: " + testArray[bustOn].rotation.y);
             revolveDirection = "left";
             layer = "one";
-            console.log("after on layer 1: " + testArray[bustOn].rotation.y);
+            //console.log("after on layer 1: " + testArray[bustOn].rotation.y);
             pause = false;
 
         }
@@ -498,10 +551,6 @@
                 //only once so that it doesn't run every render
                 layerTwoUI();   
             }
-
-            if (layer == "three") {
-
-            }
             
             renderer.render(scene, camera);
         }
@@ -511,9 +560,13 @@
 
         function openInfoPanel() {
             //define layer as three so this function is only called once
-            layer = "three";
+            //layer = "three";
             //update so that placement is more accurate
             elem = document.getElementById('infopanel');
+            elem.onmousedown = function () {
+                console.log("info panel mouse down");
+                infoPanelPressed = true;
+            };
             elem.style.padding = frameBorder + "px";
             elem.style.width = panelWidth + "px";
             elem.style.height = windowHalfY + "px";
@@ -521,7 +574,7 @@
             elem.style.top = frameTop + "px";
             elem.style.display = 'block';
             //disable 3D button
-            scene.remove(group);
+            //scene.remove(group);
         }
 
         function layerTwoUI() {
@@ -529,7 +582,9 @@
                 //initial render call for layer two, so find 
                 //central bust
                 isolateOneBust();
-                turnOnLights();
+                //addTransparentFrame();
+                openInfoPanel();
+                //turnOnLights();
             } else {
                 group.rotation.y += 0.00025;
                 if (autoRotate == true) {
@@ -547,10 +602,13 @@
             pause = true;
             //find which bust has closest z position
             bustOn = findClosestBust();
+            //center bust
+            testArray[bustOn].position.x = 0.5;
             turnOffOtherBusts(bustOn); 
+
             //scale bustOn
             //turn on info button
-            add3DInfoButton();
+            //add3DInfoButton();
             //console.log(testArray[bustOn]);
         }
 
@@ -623,13 +681,13 @@
         }
 
         function findTargetTheta() {
-            console.log(theta);
+            //console.log(theta);
             //check if it is the first user input to revolve 
             //for some reason targetTheta is too big so reduce 
-            var incrementTheta = (360/numModels);
-            if (firstRevolve == true) {
-                findTargetThetaCentering();
-            } 
+            var incrementTheta = (360/numModels)*(2/3);
+            // if (firstRevolve == true) {
+            //     findTargetThetaCentering();
+            // } 
 
             if (theta > 0 && revolveDirection == "left") {
                 targetTheta = Math.round(theta + incrementTheta);
@@ -644,7 +702,7 @@
         }
 
         function findTargetThetaCentering() {
-            console.log("first revolve");
+            //console.log("first revolve");
             //check if current theta is positive or negative
             var remainderTheta = findRemainderTheta();
             if (theta > 0 && revolveDirection == "left") {
@@ -656,7 +714,7 @@
             } else if (theta < 0 && revolveDirection == "right") {
                 targetTheta = Math.round(theta - remainderTheta);
             }
-            console.log("target theta: " + targetTheta);
+            //console.log("target theta: " + targetTheta);
             firstRevolve = false;
         }
  
