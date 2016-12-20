@@ -18,7 +18,30 @@
     <script src="MTLLoader.js"></script>
     <script src="ConvexGeometry.js"></script>
     <script src="stats.min.js"></script>
+    <!-- for magnifing library  -->
+    <script type="text/javascript" src="Event.js"></script>
+    <script type="text/javascript" src="Magnifier.js"></script>
+    <link rel="stylesheet" type="text/css" href="magnifier.css">
+
     <style>
+        @font-face {
+          font-family: 'Lucida Grande';
+          src: url('fonts/Lucida Grande.eot');
+          src: url('fonts/Lucida Grande.woff2') format('woff2'),
+               url('fonts/Lucida Grande.eot?#iefix') format('embedded-opentype');
+          font-weight: normal;
+          font-style: normal;
+        }
+
+        @font-face {
+          font-family: 'LucidaGrande';
+          src: url('fonts/LucidaGrande.woff') format('woff'),
+               url('fonts/LucidaGrande.ttf') format('truetype'),
+               url('fonts/LucidaGrande.svg#LucidaGrande') format('svg');
+          font-weight: normal;
+          font-style: normal;
+        }
+
         body {
             overflow: hidden;
             margin: 0;
@@ -37,14 +60,16 @@
             right: 0;
         }
 
+
         #infopanel {
             position: absolute;
             z-index:999999;
             background-color: #b6b6b2;
             width: 200px;
-            height: 450px;
+            height: 475px;
             right: 0px;
-            font-family: sans-serif;
+            font-family: "LucidaGrande", sans-serif;
+            line-height: 5px;
             font-size: 8pt;
             padding: 10px;
             display: none;
@@ -61,6 +86,10 @@
         #infopanel img {
 
             width: 100%;
+        }
+
+        #thumb {
+            z-index:999999;
         }
 
         #transparentFrame {
@@ -121,8 +150,8 @@
         var frameBorder = 10;
         var frameLeft = (0.5*windowHalfX) - frameBorder;
         var frameWidth = (windowHalfX);
-        var frameTop = windowHalfY*2*0.1;
-        var frameHeight = windowHalfY*2*0.8;
+        var frameTop = windowHalfY*2*0.05;
+        var frameHeight = windowHalfY*2*0.9;
 
         //info panel
         var panelWidth = (windowHalfX*1/3);
@@ -181,8 +210,6 @@
                 })(i);
             }
 
-            scene.updateMatrixWorld(true); //so we are able to get global coords of obj
-
             /* Vectors */
             raycaster = new THREE.Raycaster();
 
@@ -209,30 +236,14 @@
             document.addEventListener( 'click', onDocumentClick, false );
             document.onkeydown = checkKey;
 
-
-
+            //magnifier
+            var evt = new Event();
+            m = new Magnifier(evt);
         }
 
         /* Event Functions */
 
         function onDocumentMouseDown(e) {
-            //find boundaries of frame
-            // var leftXboundary = ((windowHalfX - ((windowHalfX*2)/6)) - frameBorder);
-            // var rightXboundary = leftXboundary + (windowHalfX*2/3);
-            // var topBoundary = windowHalfY*2/3;
-            // var bottomBoundary = topBoundary + windowHalfY;
-
-            // var frameLeft = (0.5*windowHalfX) - frameBorder;
-            // var frameWidth = (windowHalfX);
-            // var panelWidth = (windowHalfX*1/3);
-            // var panelHeight = (windowHalfX*2/3);
-            // var frameTop = windowHalfY*2*0.1;
-            // var frameHeight = windowHalfY*2*0.8;
-            // console.log("mouse down");
-            // console.log("coords: " + e.clientX + ", " + e.clientY);
-            // console.log("mouse is horiz between: " + frameLeft + ", " + (frameLeft+frameWidth));  
-            // console.log("mouse is vert between: " + frameTop + ", " + (frameTop + panelHeight));     
-            // console.log("NOT dragging");
             if ((layer == "two") && (e.clientX > frameLeft) && (e.clientX <= (frameLeft + frameWidth)) && (e.clientY > frameTop) && (e.clientY <= (frameTop + frameHeight)) ){  
                 //console.log("dragging");    
                 isDragging = true; 
@@ -335,9 +346,9 @@
             event.preventDefault();
             var xClick = event.clientX;
 
-            if (layer == "one" && (xClick < (1.5*windowHalfX)) && (xClick > (0.5*windowHalfX)) ){
+            if (layer == "one" && (xClick < (frameLeft + frameWidth + (2*frameBorder) )) && (xClick > (frameLeft)) ){
                 layer = "two";
-                addTransparentFrame();
+                //addTransparentFrame();
                 firstOpen = true; //so that this first click doesnt trigger layer 3
 
             } 
@@ -359,7 +370,7 @@
             } 
             if (layer == "two") {
                 if (infoPanelPressed == true) {
-                    console.log("info panel pressed, do something, don't go to layer 1"); 
+                    //console.log("info panel pressed, do something, don't go to layer 1"); 
                     infoPanelPressed = false;  
                 } else if (( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder) ) ) ) {
                     //console.log("clicked off from layer two");
@@ -413,14 +424,9 @@
         function openInfoPanel() {
             elem = document.getElementById('infopanel');
             elem.onmousedown = function () {
-                console.log("info panel mouse down");
+                //console.log("info panel mouse down");
                 infoPanelPressed = true;
             };
-            // elem.style.padding = frameBorder + "px";
-            // elem.style.width = panelWidth + "px";
-            // elem.style.height = panelHeight + "px";
-            // elem.style.left = frameLeft + frameWidth + 2*frameBorder + "px";
-            // elem.style.top = frameTop + "px";
             elem.style.display = 'block';
         }
 
@@ -428,6 +434,14 @@
             if (allBustsOn == true) {
                 isolateOneBust();
                 openInfoPanel();
+
+                m.attach({
+                    thumb: '#thumb',
+                    large: 'assets/2d-scan.png',
+                    mode: 'inside',
+                    zoom: 3,
+                    zoomable: false
+                });
             } else {
                 group.rotation.y += 0.00025;
                 if (autoRotate == true) {
@@ -564,21 +578,26 @@
 
     <div id="infopanel">
         <h1>AO-09</h1>
+        <br>
         <h2>Material: Brass</h2>
-        Production by <a href="http://crucible.nyc">Crucible</a><br>
-        Casted by: Tony Owusu<br>
-        Chain made by: James Aidoo
-        <br><br>
-        Dimensions: 
-        <br><br>
-        Quantity: 
-        <br><br>
+        <p>Production by <a target="_blank" href="http://crucible.nyc">Crucible</a></p>
+        <br>
+        <p>Casted by: Tony Owusu</p>
+        <p>Chain made by: James Aidoo</p>
+        <br>
+        <p>Dimensions:</p>
+        <p>Quantity:</p>
+        <br>
         <button>Add to Cart</button>
-        <br><br>
-        <img src="assets/2d-scan.png">
-         
+        <br><br> <br><br>  
+        <div>
+            <a class="magnifier-thumb-wrapper" href="assets/2d-scan.png">
+                <img id="thumb" src="assets/2d-scan.png">
+            </a>
+            <div class="magnifier-preview" id="preview"></div>
+        </div>
 
-         
     </div>
+    
 </body>
 </html>
