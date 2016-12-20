@@ -47,6 +47,7 @@
             margin: 0;
             padding: 0;
             background: white;
+            height: 100%;
         }
 
         canvas {
@@ -60,6 +61,9 @@
             right: 0;
         }
 
+        html {
+            height: 100%;
+        }
 
         #infopanel {
             position: absolute;
@@ -98,6 +102,20 @@
             display: none;
             border: 10px solid rgba(255, 228, 196, .5);
         }
+
+        #stats div {          
+            margin-top: 24px;
+            left: 0px;
+        }
+
+        #loadingOverlay {
+            position: relative;
+            background-color: blue;
+            width: 100%;
+            height: 100%;
+            z-index:999999;
+        }
+
     </style>
 </head>
 <body>
@@ -157,7 +175,7 @@
         var panelWidth = (windowHalfX*1/3);
         var panelHeight = (windowHalfX*2/3);
 
-        init();
+        //init();
 
         function init() {
 
@@ -210,6 +228,8 @@
                 })(i);
             }
 
+            
+
             /* Vectors */
             raycaster = new THREE.Raycaster();
 
@@ -239,7 +259,30 @@
             //magnifier
             var evt = new Event();
             m = new Magnifier(evt);
+
+            //stats
+            javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
         }
+        window.onload = function() {
+          //init();
+          init();
+          //initDebug();
+          console.log("everything loaded");
+
+        };
+        
+
+
+        // function initDebug() {
+
+        //     stats = new Stats();
+        //     stats.domElement.style.position = 'absolute';
+        //     stats.domElement.style.top = '0px';
+        //     document.getElementById('stats').appendChild(stats.domElement);
+
+        //     //for debuging stats (update is a bit less frequent than using the update function)
+        //     interval = setInterval(updateDebugInfo, 50);
+        // }
 
         /* Event Functions */
 
@@ -401,6 +444,7 @@
             render();
         }
 
+        //fix so that if only one bust is open the others arent being rendered
         function render() {
             //console.log(theta);
             if (pause == false && layer == "one") {
@@ -511,6 +555,7 @@
             //update all Model positions 
             //testArray[12] is the last model that needs to be loaded
             if (testArray[12] != undefined ){
+                document.getElementById("loadingOverlay").style.display="none";
                 //multiple to add for each
                 var radianPosition = 2*Math.PI/numModels;
 
@@ -572,32 +617,29 @@
         }
 
     </script>
-    <div id="transparentFrame">
-        
-    </div>
-
-    <div id="infopanel">
-        <h1>AO-09</h1>
-        <br>
-        <h2>Material: Brass</h2>
-        <p>Production by <a target="_blank" href="http://crucible.nyc">Crucible</a></p>
-        <br>
-        <p>Casted by: Tony Owusu</p>
-        <p>Chain made by: James Aidoo</p>
-        <br>
-        <p>Dimensions:</p>
-        <p>Quantity:</p>
-        <br>
-        <button>Add to Cart</button>
-        <br><br> <br><br>  
-        <div>
-            <a class="magnifier-thumb-wrapper" href="assets/2d-scan.png">
-                <img id="thumb" src="assets/2d-scan.png">
-            </a>
-            <div class="magnifier-preview" id="preview"></div>
+        <div id="loadingOverlay"></div>
+        <div id="transparentFrame"></div>
+        <div id="stats"></div>
+        <div id="infopanel">
+            <h1>AO-09</h1>
+            <br>
+            <h2>Material: Brass</h2>
+            <p>Production by <a target="_blank" href="http://crucible.nyc">Crucible</a></p>
+            <br>
+            <p>Casted by: Tony Owusu</p>
+            <p>Chain made by: James Aidoo</p>
+            <br>
+            <p>Dimensions:</p>
+            <p>Quantity:</p>
+            <br>
+            <button>Add to Cart</button>
+            <br><br> <br><br>  
+            <div>
+                <a class="magnifier-thumb-wrapper" href="assets/2d-scan.png">
+                    <img id="thumb" src="assets/2d-scan.png">
+                </a>
+                <div class="magnifier-preview" id="preview"></div>
+            </div>
         </div>
-
-    </div>
-    
 </body>
 </html>
