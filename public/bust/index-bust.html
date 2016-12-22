@@ -19,9 +19,15 @@
     <script src="ConvexGeometry.js"></script>
     <script src="stats.min.js"></script>
     <!-- for magnifing library  -->
-    <script type="text/javascript" src="Event.js"></script>
-    <script type="text/javascript" src="Magnifier.js"></script>
-    <link rel="stylesheet" type="text/css" href="magnifier.css">
+    <!-- <script type="text/javascript" src="Event.js"></script> -->
+    <!-- <script type="text/javascript" src="Magnifier.js"></script> -->
+    <!-- for loader -->
+    <!-- <script src="heartcode-canvasloader-min.js"></script> -->
+    <!-- <link rel="stylesheet" type="text/css" href="magnifier.css"> -->
+
+    <!-- inner image zoom -->
+    <link rel="stylesheet" type="text/css" href="image_zoom.css">
+    <script src="image_zoom.js"></script>
 
     <style>
         @font-face {
@@ -68,7 +74,7 @@
         #infopanel {
             position: absolute;
             z-index:999999;
-            background-color: #b6b6b2;
+            background-color: #DCE1E3;
             width: 200px;
             height: 475px;
             right: 0px;
@@ -257,9 +263,10 @@
             document.onkeydown = checkKey;
 
             //magnifier
-            var evt = new Event();
-            m = new Magnifier(evt);
+            // var evt = new Event();
+            // m = new Magnifier(evt);
 
+            
             //stats
             javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
         }
@@ -472,6 +479,17 @@
                 infoPanelPressed = true;
             };
             elem.style.display = 'block';
+
+            //inner zoom
+            new ImageZoom("img", {/*options*/});
+            // new ImageZoom("img", {  
+            //     target: {  
+            //     right:  25
+            //     }  
+            // });
+
+            //elem.style.width = (window.innerWidth)*1/3 + "px";
+            //elem.style.height = (window.innerHeight)*1/3 + "px";
         }
 
         function layerTwoUI() {
@@ -479,13 +497,16 @@
                 isolateOneBust();
                 openInfoPanel();
 
-                m.attach({
-                    thumb: '#thumb',
-                    large: 'assets/2d-scan.png',
-                    mode: 'inside',
-                    zoom: 3,
-                    zoomable: false
-                });
+                // m.attach({
+                //     thumb: '#thumb',
+                //     large: 'assets/2d-scan.png',
+                //     mode: 'inside',
+                //     zoom: 4,
+                //     zoomable: true
+                // });
+
+                
+
             } else {
                 group.rotation.y += 0.00025;
                 if (autoRotate == true) {
@@ -499,6 +520,7 @@
             //define bustOn to be the center one based on max z position value
             pause = true;
             bustOn = findClosestBust();
+            //testArray[bustOn].position.x = 0.37;
             testArray[bustOn].position.x = 0.5;
             turnOffOtherBusts(bustOn); 
         }
@@ -632,13 +654,15 @@
             <p>Dimensions:</p>
             <p>Quantity:</p>
             <br>
-            <button>Add to Cart</button>
+            <button>Purchase</button>
             <br><br> <br><br>  
-            <div>
-                <a class="magnifier-thumb-wrapper" href="assets/2d-scan.png">
-                    <img id="thumb" src="assets/2d-scan.png">
+            <img src="assets/2d-scan-I.png">
+            <div class = "zoomable zoomableInPlace active">
+                <img class = "zoomed" src="assets/2d-scan-I.png">
+                <!-- <a class="magnifier-thumb-wrapper" href="assets/2d-scan-I-thumb.png">
+                    <img id="thumb" src="assets/2d-scan-I-thumb.png">
                 </a>
-                <div class="magnifier-preview" id="preview"></div>
+                <div class="magnifier-preview" id="preview"></div> -->
             </div>
         </div>
 </body>
