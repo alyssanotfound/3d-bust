@@ -134,17 +134,6 @@
             float: right;
         }
 
-        /*#infopanel {
-
-            z-index:99999;
-            background-color: #DCE1E3;
-            width: 34%;
-            height: 100%;
-            font-family: "LucidaGrande", sans-serif;
-            line-height: 5px;
-            font-size: 8pt;
-            /*display: none;*/
-
         h1 {
             font-size: 8pt;
             width: 95%;
@@ -159,18 +148,11 @@
             margin-right: auto;
         }
 
-        /*#infopanel img {
-            height: 100%;
-        }*/
-
         #top-description {
             z-index:99999;
             height: 30%;
             width: 100%;
             background-color: orange;
-            /*padding-top: 3%;
-            padding-left: 3%;
-            width: auto;*/
         }
 
         #bottom-img {
@@ -188,13 +170,6 @@
 
         #thumb {
             z-index:999999;
-        }
-
-        #transparentFrame {
-            position: absolute;
-            z-index:999999;
-            display: none;
-            border: 10px solid rgba(255, 228, 196, .5);
         }
 
         #stats div {          
@@ -247,10 +222,9 @@
         //check or change when layer changes
         var firstOpen;
         var bustOn;
-        //var infoPanelPressed = false;
         var allBustsOn = true;
         var autoRotate = true;
-        var elem; //infopanel
+        var elem;
 
         //for rotating bust
         var isDragging = false;
@@ -259,17 +233,6 @@
             y: 0
         };
 
-        // var frameBorder = 10;
-        // var frameLeft = (0.5*windowHalfX) - frameBorder;
-        // var frameWidth = (windowHalfX);
-        // var frameTop = windowHalfY*2*0.05;
-        // var frameHeight = windowHalfY*2*0.9;
-
-        // //info panel
-        // var panelWidth = (windowHalfX*1/3);
-        // var panelHeight = (windowHalfX*2/3);
-
-        //init();
 
         function init() {
 
@@ -344,9 +307,6 @@
             window.addEventListener('resize', onWindowResize, false);
 
             //for dragging/rotating bust
-            //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-            //document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
             document.getElementById("leftblock").onmousedown = function() {mouseDown()};
             document.getElementById("leftblock").onmousemove = function() {mouseMove(event)};
 
@@ -368,30 +328,7 @@
           console.log("everything loaded");
 
         };
-        
 
-
-        // function initDebug() {
-
-        //     stats = new Stats();
-        //     stats.domElement.style.position = 'absolute';
-        //     stats.domElement.style.top = '0px';
-        //     document.getElementById('stats').appendChild(stats.domElement);
-
-        //     //for debuging stats (update is a bit less frequent than using the update function)
-        //     interval = setInterval(updateDebugInfo, 50);
-        // }
-
-        /* Event Functions */
-
-        // function onDocumentMouseDown(e) {
-        //     //
-        //     if ((layer == "two") && (e.clientX > frameLeft) && (e.clientX <= (frameLeft + frameWidth)) && (e.clientY > frameTop) && (e.clientY <= (frameTop + frameHeight)) ){  
-        //         //console.log("dragging");    
-        //         isDragging = true; 
-        //         autoRotate = false;  
-        //     } 
-        // }
 
         function mouseDown() {
             isDragging = true; 
@@ -422,33 +359,6 @@
             };
         } 
         
-
-
-        // function onDocumentMouseMove(e) {
-        //     if (layer == "two"){
-        //         var deltaMove = {
-        //             x: e.offsetX-previousMousePosition.x,
-        //             y: e.offsetY-previousMousePosition.y
-        //         };
-        //         if(isDragging) {
-        //             var deltaRotationQuaternion = new THREE.Quaternion()
-        //                 .setFromEuler(new THREE.Euler(
-        //                     0,
-        //                     toRadians(deltaMove.x * 1),
-        //                     0,
-        //                     'XYZ'
-        //                 ));
-                    
-        //             testArray[bustOn].quaternion.multiplyQuaternions(deltaRotationQuaternion, testArray[bustOn].quaternion);
-        //         }
-                
-        //         previousMousePosition = {
-        //             x: e.offsetX,
-        //             y: e.offsetY
-        //         };
-        //     }
-        // }
-
         function checkKey(e) {
 
             e = e || window.event;
@@ -464,45 +374,15 @@
             }
         }
 
-        // function addTransparentFrame() {
-        //     //transparent frame
-        //     centerFrame = document.getElementById('transparentFrame');
-        //     centerFrame.style.width = frameWidth + "px";
-        //     centerFrame.style.height = frameHeight + "px";
-        //     centerFrame.style.left = frameLeft + "px";
-        //     centerFrame.style.top = frameTop + "px";
-        //     centerFrame.style.borderWidth = frameBorder;
-        //     centerFrame.style.display = "block";
-        // }
 
         function onWindowResize() {
 
             windowHalfX = window.innerWidth / 2;
             windowHalfY = window.innerHeight / 2;
 
-
-            // frameLeft = (0.5*windowHalfX) - frameBorder;
-            // frameWidth = (windowHalfX);
-            // frameTop = windowHalfY*2*0.05;
-            // frameHeight = windowHalfY*2*0.9;
-
-            // //info panel
-            // panelWidth = (windowHalfX*1/3);
-            // panelHeight = (windowHalfX*2/3);
-
-
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
 
-            // if (document.getElementById('transparentFrame').style.display == "block") {
-            //     addTransparentFrame();
-            // }
-
-            //add check if on layer one or two and render appropriate elements
-
-            // if (document.getElementById('infopanel').style.display == "block") {
-            //     openInfoPanel();
-            // }
             
             renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -528,7 +408,6 @@
 
             if (layer == "one" && (xClick > (0.33*window.innerWidth)) && (xClick < ((0.66*window.innerWidth))) ){
                 layer = "two";
-                //addTransparentFrame();
                 firstOpen = true; //so that this first click doesnt trigger layer 3
 
             } 
@@ -548,16 +427,6 @@
             if (isDragging == true) {
                 isDragging = false;
             } 
-            // if (layer == "two") {
-            //     if (infoPanelPressed == true) {
-            //         //console.log("info panel pressed, do something, don't go to layer 1"); 
-            //         infoPanelPressed = false;  
-            //     } 
-            //     // else if (( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder) ) ) ) {
-            //     //     //console.log("clicked off from layer two");
-            //     //     goBackToLayerOne();
-            //     // } 
-            // }
         }
 
         function goBackToLayerOne() {            
@@ -607,10 +476,6 @@
             elem = document.getElementById('rightblock');
             baseelem = document.getElementById('layer2block');
             leftelem = document.getElementById('leftblock');
-            // elem.onmousedown = function () {
-            //     //console.log("info panel mouse down");
-            //     infoPanelPressed = true;
-            // };
             elem.style.display = 'block';
             baseelem.style.display = 'block';
             leftelem.style.display = 'block';
@@ -621,9 +486,6 @@
                 maxZoom: 5, 
             });
 
-            // elem.style.width = (window.innerWidth)*1/3 + "px";
-            // elem.style.height = ((window.innerHeight)) + "px";
-            //elem.style.top = ((window.innerHeight)*0.1) + "px";
         }
 
         function layerTwoUI() {
@@ -792,40 +654,6 @@
                 </p>
             </div>
         </div>
-                <!-- <div>
-                    <img src="assets/2d-scan-I.png">
-                </div> -->
-                    <!-- <img src="assets/2d-scan-I.png">
-                    <div class = "zoomable zoomableInPlace active">
-                        <img class = "zoomed" src="assets/2d-scan-I.png">
-                    </div> -->
-                
-            
-            <!-- <div id="infopanel"> -->
-                <!-- <div id="top-description">
-                    <h1>AO-09</h1>
-                    <br>
-                    <h2>Material: Brass</h2>
-                    <p>Production by <a target="_blank" href="http://crucible.nyc">Crucible</a></p>
-                    <br>
-                    <p>Casted by: Tony Owusu</p>
-                    <p>Chain made by: James Aidoo</p>
-                    <br>
-                    <p>Dimensions:</p>
-                    <p>Quantity:</p>
-                    <br>
-                    <button>Purchase</button>
-                </div>
-                <div id="bottom-img">
-                    <img src="assets/2d-scan-I.png">
-                    <div class = "zoomable zoomableInPlace active">
-                        <img class = "zoomed" src="assets/2d-scan-I.png">
-                            <img id="thumb" src="assets/2d-scan-I-thumb.png">
-                        </a>
-                        <div class="magnifier-preview" id="preview"></div> -->
-                    <!-- </div> -->
-                <!-- </div>  -->
-            <!-- </div> -->
         
 </body>
 </html>
