@@ -99,7 +99,7 @@
             height: 91%;
             left: 2%;
             top: 6%;
-            border: 1px solid black;
+            border: 1px solid yellow;
             display: none;
         }
 
@@ -107,7 +107,7 @@
             z-index:99999;
             width: 66%;
             height: 100%;
-            border: 1px solid black;
+            border: 1px solid green;
             float: left;
         }
         #rightblock {
@@ -115,7 +115,7 @@
             z-index:99999;
             width: 33%;
             height: 100%;
-            border: 1px solid black;
+            border: 1px solid blue;
             float: right;
 
         }
@@ -127,6 +127,11 @@
             width: 95%;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        #rightblock div img {
+            width: 1px;
+            float: right;
         }
 
         /*#infopanel {
@@ -242,7 +247,7 @@
         //check or change when layer changes
         var firstOpen;
         var bustOn;
-        var infoPanelPressed = false;
+        //var infoPanelPressed = false;
         var allBustsOn = true;
         var autoRotate = true;
         var elem; //infopanel
@@ -254,15 +259,15 @@
             y: 0
         };
 
-        var frameBorder = 10;
-        var frameLeft = (0.5*windowHalfX) - frameBorder;
-        var frameWidth = (windowHalfX);
-        var frameTop = windowHalfY*2*0.05;
-        var frameHeight = windowHalfY*2*0.9;
+        // var frameBorder = 10;
+        // var frameLeft = (0.5*windowHalfX) - frameBorder;
+        // var frameWidth = (windowHalfX);
+        // var frameTop = windowHalfY*2*0.05;
+        // var frameHeight = windowHalfY*2*0.9;
 
-        //info panel
-        var panelWidth = (windowHalfX*1/3);
-        var panelHeight = (windowHalfX*2/3);
+        // //info panel
+        // var panelWidth = (windowHalfX*1/3);
+        // var panelHeight = (windowHalfX*2/3);
 
         //init();
 
@@ -339,8 +344,11 @@
             window.addEventListener('resize', onWindowResize, false);
 
             //for dragging/rotating bust
-            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+            //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            //document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+            document.getElementById("leftblock").onmousedown = function() {mouseDown()};
+            document.getElementById("leftblock").onmousemove = function() {mouseMove(event)};
 
             document.addEventListener( 'click', onDocumentClick, false );
             document.onkeydown = checkKey;
@@ -376,38 +384,70 @@
 
         /* Event Functions */
 
-        function onDocumentMouseDown(e) {
-            if ((layer == "two") && (e.clientX > frameLeft) && (e.clientX <= (frameLeft + frameWidth)) && (e.clientY > frameTop) && (e.clientY <= (frameTop + frameHeight)) ){  
-                //console.log("dragging");    
-                isDragging = true; 
-                autoRotate = false;  
-            } 
+        // function onDocumentMouseDown(e) {
+        //     //
+        //     if ((layer == "two") && (e.clientX > frameLeft) && (e.clientX <= (frameLeft + frameWidth)) && (e.clientY > frameTop) && (e.clientY <= (frameTop + frameHeight)) ){  
+        //         //console.log("dragging");    
+        //         isDragging = true; 
+        //         autoRotate = false;  
+        //     } 
+        // }
+
+        function mouseDown() {
+            isDragging = true; 
+            autoRotate = false; 
         }
 
-        function onDocumentMouseMove(e) {
-            if (layer == "two"){
-                var deltaMove = {
-                    x: e.offsetX-previousMousePosition.x,
-                    y: e.offsetY-previousMousePosition.y
-                };
-                if(isDragging) {
-                    var deltaRotationQuaternion = new THREE.Quaternion()
-                        .setFromEuler(new THREE.Euler(
-                            0,
-                            toRadians(deltaMove.x * 1),
-                            0,
-                            'XYZ'
-                        ));
-                    
-                    testArray[bustOn].quaternion.multiplyQuaternions(deltaRotationQuaternion, testArray[bustOn].quaternion);
-                }
+        function mouseMove(e) {
+            //console.log(e);
+            var deltaMove = {
+                x: e.offsetX-previousMousePosition.x,
+                y: e.offsetY-previousMousePosition.y
+            };
+            if(isDragging) {
+                var deltaRotationQuaternion = new THREE.Quaternion()
+                    .setFromEuler(new THREE.Euler(
+                        0,
+                        toRadians(deltaMove.x * 1),
+                        0,
+                        'XYZ'
+                    ));
                 
-                previousMousePosition = {
-                    x: e.offsetX,
-                    y: e.offsetY
-                };
+                testArray[bustOn].quaternion.multiplyQuaternions(deltaRotationQuaternion, testArray[bustOn].quaternion);
             }
-        }
+                
+            previousMousePosition = {
+                x: e.offsetX,
+                y: e.offsetY
+            };
+        } 
+        
+
+
+        // function onDocumentMouseMove(e) {
+        //     if (layer == "two"){
+        //         var deltaMove = {
+        //             x: e.offsetX-previousMousePosition.x,
+        //             y: e.offsetY-previousMousePosition.y
+        //         };
+        //         if(isDragging) {
+        //             var deltaRotationQuaternion = new THREE.Quaternion()
+        //                 .setFromEuler(new THREE.Euler(
+        //                     0,
+        //                     toRadians(deltaMove.x * 1),
+        //                     0,
+        //                     'XYZ'
+        //                 ));
+                    
+        //             testArray[bustOn].quaternion.multiplyQuaternions(deltaRotationQuaternion, testArray[bustOn].quaternion);
+        //         }
+                
+        //         previousMousePosition = {
+        //             x: e.offsetX,
+        //             y: e.offsetY
+        //         };
+        //     }
+        // }
 
         function checkKey(e) {
 
@@ -440,12 +480,16 @@
             windowHalfX = window.innerWidth / 2;
             windowHalfY = window.innerHeight / 2;
 
+
             // frameLeft = (0.5*windowHalfX) - frameBorder;
             // frameWidth = (windowHalfX);
+            // frameTop = windowHalfY*2*0.05;
+            // frameHeight = windowHalfY*2*0.9;
+
+            // //info panel
             // panelWidth = (windowHalfX*1/3);
             // panelHeight = (windowHalfX*2/3);
-            // frameTop = windowHalfY*2*0.1;
-            // frameHeight = windowHalfY*2*0.8;
+
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -453,9 +497,12 @@
             // if (document.getElementById('transparentFrame').style.display == "block") {
             //     addTransparentFrame();
             // }
-            if (document.getElementById('infopanel').style.display == "block") {
-                openInfoPanel();
-            }
+
+            //add check if on layer one or two and render appropriate elements
+
+            // if (document.getElementById('infopanel').style.display == "block") {
+            //     openInfoPanel();
+            // }
             
             renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -479,7 +526,7 @@
             event.preventDefault();
             var xClick = event.clientX;
 
-            if (layer == "one" && (xClick < (frameLeft + frameWidth + (2*frameBorder) )) && (xClick > (frameLeft)) ){
+            if (layer == "one" && (xClick > (0.33*window.innerWidth)) && (xClick < ((0.66*window.innerWidth))) ){
                 layer = "two";
                 //addTransparentFrame();
                 firstOpen = true; //so that this first click doesnt trigger layer 3
@@ -501,16 +548,16 @@
             if (isDragging == true) {
                 isDragging = false;
             } 
-            if (layer == "two") {
-                if (infoPanelPressed == true) {
-                    //console.log("info panel pressed, do something, don't go to layer 1"); 
-                    infoPanelPressed = false;  
-                } 
-                // else if (( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder) ) ) ) {
-                //     //console.log("clicked off from layer two");
-                //     goBackToLayerOne();
-                // } 
-            }
+            // if (layer == "two") {
+            //     if (infoPanelPressed == true) {
+            //         //console.log("info panel pressed, do something, don't go to layer 1"); 
+            //         infoPanelPressed = false;  
+            //     } 
+            //     // else if (( xClick < (frameLeft) || xClick >= (frameLeft + frameWidth + (2*frameBorder) ) ) ) {
+            //     //     //console.log("clicked off from layer two");
+            //     //     goBackToLayerOne();
+            //     // } 
+            // }
         }
 
         function goBackToLayerOne() {            
@@ -560,10 +607,10 @@
             elem = document.getElementById('rightblock');
             baseelem = document.getElementById('layer2block');
             leftelem = document.getElementById('leftblock');
-            elem.onmousedown = function () {
-                //console.log("info panel mouse down");
-                infoPanelPressed = true;
-            };
+            // elem.onmousedown = function () {
+            //     //console.log("info panel mouse down");
+            //     infoPanelPressed = true;
+            // };
             elem.style.display = 'block';
             baseelem.style.display = 'block';
             leftelem.style.display = 'block';
@@ -574,8 +621,8 @@
                 maxZoom: 5, 
             });
 
-            elem.style.width = (window.innerWidth)*1/3 + "px";
-            elem.style.height = ((window.innerHeight)) + "px";
+            // elem.style.width = (window.innerWidth)*1/3 + "px";
+            // elem.style.height = ((window.innerHeight)) + "px";
             //elem.style.top = ((window.innerHeight)*0.1) + "px";
         }
 
@@ -607,7 +654,7 @@
             //define bustOn to be the center one based on max z position value
             pause = true;
             bustOn = findClosestBust();
-            testArray[bustOn].position.x = 0.33333;
+            testArray[bustOn].position.x = 0.34;
             //testArray[bustOn].position.x = 0.5;
             turnOffOtherBusts(bustOn); 
         }
@@ -743,13 +790,17 @@
                     <p>Quantity:</p>
                     <p><button>Purchase</button></p>
                 </p>
-                
+            </div>
+        </div>
+                <!-- <div>
+                    <img src="assets/2d-scan-I.png">
+                </div> -->
                     <!-- <img src="assets/2d-scan-I.png">
                     <div class = "zoomable zoomableInPlace active">
                         <img class = "zoomed" src="assets/2d-scan-I.png">
                     </div> -->
                 
-            </div>
+            
             <!-- <div id="infopanel"> -->
                 <!-- <div id="top-description">
                     <h1>AO-09</h1>
@@ -775,6 +826,6 @@
                     <!-- </div> -->
                 <!-- </div>  -->
             <!-- </div> -->
-        </div>
+        
 </body>
 </html>
