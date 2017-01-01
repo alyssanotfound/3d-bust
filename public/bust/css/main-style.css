@@ -1,0 +1,194 @@
+@font-face {
+  font-family: 'Lucida Grande';
+  src: url('../fonts/Lucida-Grande/Lucida Grande.eot');
+  src: url('../fonts/Lucida-Grande/Lucida Grande.woff2') format('woff2'),
+       url('../fonts/Lucida-Grande/Lucida Grande.eot?#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'LucidaGrande';
+  src: url('../fonts/Lucida-Grande/LucidaGrande.woff') format('woff'),
+       url('../fonts/Lucida-Grande/LucidaGrande.ttf') format('truetype'),
+       url('../fonts/Lucida-Grande/LucidaGrande.svg#LucidaGrande') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'LucidaGrande-Bold';
+  src: url('../fonts/Lucida-Grande-Bold/LucidaGrande-Bold.eot?#iefix') format('embedded-opentype'),  
+       url('../fonts/Lucida-Grande-Bold/LucidaGrande-Bold.woff') format('woff'), 
+       url('../fonts/Lucida-Grande-Bold/LucidaGrande-Bold.ttf')  format('truetype'), 
+       url('../fonts/Lucida-Grande-Bold/LucidaGrande-Bold.svg#LucidaGrande-Bold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TheSansMono-Plain';
+  src: url('../fonts/Sans-Mono/TheSansMono-Plain.eot?#iefix') format('embedded-opentype'),  url('../fonts/Sans-Mono/TheSansMono-Plain.otf')  format('opentype'),
+         url('../fonts/Sans-Mono/TheSansMono-Plain.woff') format('woff'), url('../fonts/Sans-Mono/TheSansMono-Plain.ttf')  format('truetype'), url('../fonts/Sans-Mono/TheSansMono-Plain.svg#TheSansMono-Plain') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background: white;
+    height: 100%;
+    font-family: LucidaGrande, serif;
+}
+
+input[type=text] {
+    width: 15px;
+}
+
+br {
+   display: block;
+   margin: 5px 0;
+}
+
+#header {
+    position: absolute;
+    color: black;
+    z-index: 999999;
+    height: 6%;
+    width: 100%;
+    /*padding: 5px;*/
+}
+
+#title {
+    font-family: TheSansMono-Plain, sans-serif;
+    float: left;
+    padding-left: 2%;
+    padding-top: 1%;
+}
+
+#cart {
+    font-size: 9pt;
+    float: right;
+    padding-right: 2%;
+    padding-top: 1.5%;
+}
+
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+html {
+    height: 100%;
+}
+
+#layer2block {
+    z-index:99990;
+    position: absolute;
+    width: 96%;
+    height: 91%;
+    left: 2%;
+    top: 6%;
+    border: 1px solid yellow;
+    display: none;
+}
+
+#leftblock {
+    z-index:99999;
+    width: 66%;
+    height: 100%;
+    border: 1px solid green;
+    float: left;
+}
+#rightblock {
+    position: relative;
+    z-index:99999;
+    width: 33%;
+    height: 100%;
+    border: 1px solid blue;
+    float: right;
+
+}
+
+#rightblock p {
+    /*background-color: blue;*/
+    font-size: 8pt;
+    line-height: 5px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#rightblock div img {
+    width: 1px;
+    float: right;
+}
+
+#leftblock img {
+    width: 5%;
+    height: auto;
+    margin-top: 2%;
+    margin-left: 2%;
+}
+
+h1 {
+    font-family: LucidaGrande-Bold, sans-serif;
+    font-size: 8pt;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+}
+
+h2 {
+
+    font-size: 8pt;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#top-description {
+    z-index:99999;
+    height: 30%;
+    width: 100%;
+    background-color: orange;
+}
+
+#bottom-img {
+    z-index:99999;
+    height: 70%;
+    width: 100%;
+    background-color: purple;
+}
+
+#bottom-img img {
+    width: auto;
+    display: block;
+    margin: auto;
+}
+
+#thumb {
+    z-index:999999;
+}
+
+#stats div {          
+    margin-top: 24px;
+    left: 0px;
+}
+
+#loadingOverlay {
+    position: relative;
+    background-color: blue;
+    width: 100%;
+    height: 100%;
+    z-index:999999;
+}
