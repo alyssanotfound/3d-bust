@@ -1,3 +1,9 @@
+/*@media only screen and (max-width: 500px) {
+    body {
+        background-color: lightblue;
+    }
+}*/
+
 @font-face {
   font-family: 'Lucida Grande';
   src: url('../fonts/Lucida-Grande/Lucida Grande.eot');
@@ -33,6 +39,8 @@
   font-weight: normal;
   font-style: normal;
 }
+
+
 
 body {
     overflow: hidden;
@@ -90,6 +98,7 @@ html {
     height: 100%;
 }
 
+
 #layer2block {
     z-index:99990;
     position: absolute;
@@ -102,6 +111,7 @@ html {
 }
 
 #leftblock {
+    position: relative;
     z-index:99999;
     width: 66%;
     height: 100%;
@@ -127,9 +137,10 @@ html {
     margin-right: auto;
 }
 
-#rightblock div img {
-    width: 1px;
-    float: right;
+#rightblock img {
+    position: relative;
+    height: 100%;
+    float: left;
 }
 
 #leftblock img {
@@ -137,6 +148,17 @@ html {
     height: auto;
     margin-top: 2%;
     margin-left: 2%;
+}
+
+#rightblockTop {
+    position: relative;
+    height: 45%;
+    border: 1px solid orange;
+}
+#rightblockBottom {
+    position: relative;
+    height: 54%;
+    border: 1px solid red;
 }
 
 h1 {

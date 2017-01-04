@@ -71,28 +71,35 @@ function init() {
     backLight.position.set(100, 0, -100).normalize();
 
     /* Generate 13 busts */
-  
-    for (var i = numModels - 1; i >= 0; i--) {
-        (function(index){
-                var path = "assets/2014-AO-" + (index+1) + "/";
-                var mtlLoader = new THREE.MTLLoader();
-                mtlLoader.setBaseUrl(path);
-                mtlLoader.setPath(path);                       
-                mtlLoader.load('model_mesh.obj.mtl', function (materials) {
-                    materials.preload();
-                    var objLoader = new THREE.OBJLoader();
-                    objLoader.setMaterials(materials);
-                    objLoader.setPath(path);
-                    objLoader.load('model_mesh.obj', function (obj) {
-                        testArray.push(obj);
-                        scene.add(obj);  
-                        animate(); 
-                    });
+    var paths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        .map(function(value) {
+            return "assets/2014-AO-" + value + "/";
+        });
+
+    function loadNextPath() {
+        var pathToLoad = paths.pop();
+        if (!pathToLoad) {
+            console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
+            animate();
+        } else {
+            var mtlLoader = new THREE.MTLLoader();
+            mtlLoader.setBaseUrl(pathToLoad);
+            mtlLoader.setPath(pathToLoad);                       
+            mtlLoader.load('model_mesh.obj.mtl', function (materials) {
+                materials.preload();
+                var objLoader = new THREE.OBJLoader();
+                objLoader.setMaterials(materials);
+                objLoader.setPath(pathToLoad);
+                objLoader.load('model_mesh.obj', function (obj) {
+                    testArray.push(obj);
+                    scene.add(obj);  
+                    loadNextPath(); 
                 });
-        })(i);
+            });
+        }
     }
 
-    
+    loadNextPath();
 
     /* Vectors */
     raycaster = new THREE.Raycaster();
@@ -130,11 +137,7 @@ function init() {
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
 window.onload = function() {
-  //init();
   init();
-  //initDebug();
-  console.log("everything loaded");
-
 };
 
 
@@ -190,7 +193,6 @@ function checkKey(e) {
 
 
 function onWindowResize() {
-
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -261,6 +263,7 @@ function goBackToLayerOne() {
 /* Core Animate Render Functions */
 
 function animate() {
+    console.log('called animate!');
     requestAnimationFrame(animate);
     render();
 }

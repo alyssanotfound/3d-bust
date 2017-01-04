@@ -5,12 +5,12 @@
     
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokuasi</title>
     
     <meta name="description" content="Produced by Crucible.nyc">
     <meta name="author" content="Pokuasi">
-
+    
 
     <script src="js/three.js"></script>
     <script src="js/Detector.js"></script>
@@ -25,7 +25,7 @@
     <!-- for loader -->
     <!-- <script src="heartcode-canvasloader-min.js"></script> -->
     <!-- <link rel="stylesheet" type="text/css" href="magnifier.css"> -->
-
+    <link rel='stylesheet' media='screen and (max-width: 700px)' href='css/mobile-style.css' />
     <link rel="stylesheet" href="css/main-style.css">
     <!-- inner image zoom -->
     <link rel="stylesheet" type="text/css" href="css/image_zoom.css">
@@ -34,37 +34,34 @@
     <script src="js/main.js"></script>
 </head>
 <body>
-
-
-    <script>
-
-
-
-    </script>
-        <div id="loadingOverlay"></div>
-        <div id= "header"><span id="title">POKUASI</span><span id="cart">cart</span></div>
-        <!-- <div id="stats"></div> -->
-        <div id="layer2block">
-            <div id="leftblock">  
-                <img id= "closeButton" src="assets/x-button.png">
+    <div id="loadingOverlay"></div>
+    <div id= "header"><span id="title">POKUASI</span><span id="cart">cart</span></div>
+    <!-- <div id="stats"></div> -->
+    <div id="layer2block">
+        <div id="leftblock">  
+            <img id= "closeButton" src="assets/x-button.png">
+        </div>
+        <div id="rightblock">
+            <div id="rightblockTop">
+                <h1>AO-09</h1>
+                <p>Material: Brass</p>
+                <p>Dimensions: 8" wide, left chain: 5.5", right chain: 4.5" </p>
+                <br>
+                <p>Production by <a target="_blank" href="http://www.crucible.nyc">Crucible</a></p>
+                <p>Casted by: Tony Owusu</p>
+                <p>Chain made by: James Aidoo</p>
+                <p>Edition of 12</p>
+                
+                <br>
+                <p>Quantity: <input type="text" name="quantity" value="1"></p>
+                <p><button>Purchase</button></p>
             </div>
-            <div id="rightblock">
-                <p>
-                    <h1>AO-09</h1>
-                    <p>Material: Brass</p>
-                    <p>Dimensions: 8" wide, left chain: 5.5", right chain: 4.5" </p>
-                    <br>
-                    <p>Production by <a target="_blank" href="http://www.crucible.nyc">Crucible</a></p>
-                    <p>Casted by: Tony Owusu</p>
-                    <p>Chain made by: James Aidoo</p>
-                    <p>Edition of 12</p>
-                    
-                    <br>
-                    <p>Quantity: <input type="text" name="quantity" value="1"></p>
-                    <p><button>Purchase</button></p>
-                </p>
+            <div id="rightblockBottom">
+                <img src="assets/2d-scan.png">
             </div>
         </div>
-        <canvas id="canvasID"></canvas>
+
+    </div>
+    <canvas id="canvasID"></canvas>
 </body>
 </html>
