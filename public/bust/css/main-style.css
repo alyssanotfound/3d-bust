@@ -214,3 +214,11 @@ h2 {
     height: 100%;
     z-index:999999;
 }
+
+#centerLine {
+    position: absolute;
+    border: 1px solid red;
+    height: 100%;
+    width: 1px;
+    z-index:999999;
+}

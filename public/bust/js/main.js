@@ -16,19 +16,21 @@ var testArray = [];
 var layer = "one";
 
 //check or change with each render, layer 1
-var initialtheta = (1/3)*(360/numModels);
+var initialtheta = 6.9;
+//6.9 loads model centered
 var theta = initialtheta;
 var targetTheta;
 var pause = false;
 var revolveDirection = "left";
 var revolveClicked = false;
-var firstRevolve = true;
+
 
 //check or change when layer changes
 var firstOpen;
 var bustOn;
 var allBustsOn = true;
 var autoRotate = true;
+var rotateAligned = false;
 var elem;
 var leftelem;
 var baseelem;
@@ -70,6 +72,7 @@ function init() {
     backLight = new THREE.DirectionalLight(0xffffff, 1.0);
     backLight.position.set(100, 0, -100).normalize();
 
+
     /* Generate 13 busts */
     var paths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         .map(function(value) {
@@ -81,6 +84,7 @@ function init() {
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
+            document.getElementById("loadingOverlay").style.display="none";
         } else {
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl(pathToLoad);
@@ -100,6 +104,8 @@ function init() {
     }
 
     loadNextPath();
+
+    
 
     /* Vectors */
     raycaster = new THREE.Raycaster();
@@ -128,6 +134,8 @@ function init() {
     document.getElementById("title").onclick = function() {goBackToLayerOne();};
     document.onkeydown = checkKey;
 
+    var centerline = document.getElementById("centerLine");
+    centerline.style.marginLeft = windowHalfX + "px";
     //magnifier
     // var evt = new Event();
     // m = new Magnifier(evt);
@@ -180,11 +188,11 @@ function checkKey(e) {
 
     e = e || window.event;
 
-    if (e.keyCode == '37') {
+    if (e.keyCode == '37' && revolveClicked == false) {
         revolveDirection = "left";
         findTargetTheta();
         revolveClicked = true;
-    } else if (e.keyCode == '39') {
+    } else if (e.keyCode == '39' && revolveClicked == false) {
         revolveDirection = "right";
         findTargetTheta();
         revolveClicked = true;
@@ -226,14 +234,14 @@ function onCanvasClick( event ) {
         firstOpen = true; //so that this first click doesnt trigger layer 3
 
     } 
-    if (layer == "one" && (xClick < windowHalfX)) {
+    if (layer == "one" && (xClick < windowHalfX) && revolveClicked == false) {
         //switch bc we assume if someone clicks on the model 
         //on the left it should move towards them
         revolveDirection = "right";
         findTargetTheta();
         revolveClicked = true;
         } 
-    if (layer == "one" && (xClick >= windowHalfX)) {
+    if (layer == "one" && (xClick >= windowHalfX) && revolveClicked == false) {
         //rotate right
         revolveDirection = "left";
         findTargetTheta();
@@ -254,16 +262,16 @@ function goBackToLayerOne() {
 
     turnOnAllBusts();
     autoRotate = true;
-    firstRevolve = true;
     revolveDirection = "left";
     layer = "one";
     pause = false;
+    rotateAligned = false;
 }
 
 /* Core Animate Render Functions */
 
 function animate() {
-    console.log('called animate!');
+    //console.log('called animate!');
     requestAnimationFrame(animate);
     render();
 }
@@ -276,7 +284,7 @@ function render() {
     } 
 
     if (revolveClicked == true && layer == "one") {
-        rotateOneBustInterval(targetTheta);
+        rotateOneBustInterval();
     } 
 
     if (layer == "two") {
@@ -369,7 +377,7 @@ function turnOnAllBusts() {
 }
 
 function updateRevolution() {
-    var increment = .01; //changes speed
+    var increment = 0.05; //changes speed
     var pathEllipse = 1.0;
     //theta is degrees
     if (revolveDirection == "left") {
@@ -383,35 +391,84 @@ function updateRevolution() {
     var radians = toRadians(theta);
     //update all Model positions 
     //testArray[12] is the last model that needs to be loaded
-    if (testArray[12] != undefined ){
-        document.getElementById("loadingOverlay").style.display="none";
+    //if (testArray[12] != undefined ){
+        //document.getElementById("loadingOverlay").style.display="none";
         //multiple to add for each
-        var radianPosition = 2*Math.PI/numModels;
+    var radianPosition = 2*Math.PI/numModels;
 
-        for (var i = testArray.length - 1; i >= 0; i--) {
-            testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
-            testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
-            //testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
-        }
+    for (var i = testArray.length - 1; i >= 0; i--) {
+        testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
+        testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
+        //testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
     }
+    //}
 }
 
 function findTargetTheta() {
-    var incrementTheta = (360/numModels)*(2/3);
-    if (theta > 0 && revolveDirection == "left") {
-        targetTheta = Math.round(theta + incrementTheta);
-    } else if (theta > 0 && revolveDirection == "right") {
-        targetTheta = Math.round(theta - incrementTheta);
-    } else if (theta < 0 && revolveDirection == "left") {
-        targetTheta = Math.round(theta + incrementTheta);
-    } else if (theta < 0 && revolveDirection == "right") {
-        targetTheta = Math.round(theta - incrementTheta);
+    var evenInterval = (360/numModels);
+    if (rotateAligned == false) {
+        console.log("align rotation once");
+        
+        //console.log(theta);
+        //console.log(Math.round(   (27.6923 -   ((((theta-6.9)/27.6923) % 1)*27.6923))   + theta    ));
+        var incrementTheta = (((Math.abs((theta-initialtheta)/evenInterval)) % 1)*evenInterval);
+        //targetTheta = Math.round(evenInterval - incrementTheta + theta );
+        console.log("increment theta: " +incrementTheta);
+        
+        if (theta > 0 && revolveDirection == "left") {
+            targetTheta = theta + evenInterval - incrementTheta;
+        } else if (theta > 0 && revolveDirection == "right") {
+            targetTheta = theta - incrementTheta;
+        } else if (theta < 0 && revolveDirection == "left") {
+            targetTheta = theta + evenInterval - incrementTheta;
+        } else if (theta < 0 && revolveDirection == "right") {
+            targetTheta = theta - incrementTheta;
+        } 
+        rotateAligned = true;
+    } else {
+        console.log("find next");
+        if (theta > 0 && revolveDirection == "left") {
+            targetTheta = theta + evenInterval;
+        } else if (theta > 0 && revolveDirection == "right") {
+            targetTheta = theta - evenInterval;
+        } else if (theta < 0 && revolveDirection == "left") {
+            targetTheta = theta + evenInterval;
+        } else if (theta < 0 && revolveDirection == "right") {
+            targetTheta = theta - evenInterval;
+        }
     }
-    console.log(theta);
-    console.log(targetTheta);
+
+
+    //set check so that bust doesnt rotate only a tiny amount
+    //to reach targetTheta
+    // if (  Math.abs(  Math.abs(targetTheta) - Math.abs(theta)  ) < 3 ) {
+    //     console.log("theta basically equals target theta");
+    //     if (theta > 0 && revolveDirection == "left") {
+    //         targetTheta = targetTheta + evenInterval;
+    //     } else if (theta > 0 && revolveDirection == "right") {
+    //         targetTheta = targetTheta - evenInterval;
+    //     } else if (theta < 0 && revolveDirection == "left") {
+    //         targetTheta = targetTheta + evenInterval;
+    //     } else if (theta < 0 && revolveDirection == "right") {
+    //         targetTheta = targetTheta - evenInterval;
+    //     } 
+    // }
+    console.log("current theta: " + theta);
+    console.log("target theta: " + targetTheta);
+    //console.log("current theta: " + theta);
+    //console.log("target theta: " + targetTheta);
+
+    // else if (theta < 0 && revolveDirection == "left") {
+    //     targetTheta = Math.round(theta + incrementTheta);
+    // } else if (theta < 0 && revolveDirection == "right") {
+    //     targetTheta = Math.round(theta - incrementTheta);
+    // }
+    //console.log(theta);
+    //console.log(targetTheta);
 }
 
-function rotateOneBustInterval(targetTheta) {
+function rotateOneBustInterval() {
+
     var increment = .6;
     var pathEllipse = 1;
     
@@ -432,10 +489,35 @@ function rotateOneBustInterval(targetTheta) {
         testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
         testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
     }
-    if (Math.round(theta) == targetTheta) {
+    //console.log("check if these match: ");
+    //console.log("current theta: " + theta);
+    //console.log("target theta: " + targetTheta);
+
+    if (revolveDirection == "left" && (theta > targetTheta)) {
+        console.log("target reached, increasing theta");
+        theta = targetTheta;
         pause = true;
         revolveClicked = false;
+        
+    } else if (revolveDirection == "right" && (theta < targetTheta)) {
+        console.log("target reached, decreasing theta");
+        theta = targetTheta;
+        pause = true;
+        revolveClicked = false;
+
     }
+
+    // if (Math.round(theta) == Math.round(targetTheta)) {
+    //     console.log("target reached");
+    //     if (revolveDirection == "left") {
+    //        theta = targetTheta + 1; 
+    //    } else if (revolveDirection == "right") {
+    //        theta = targetTheta - 1;
+    //    }
+        
+    //     pause = true;
+    //     revolveClicked = false;
+    // }
 
 }
 //Geometry functions
