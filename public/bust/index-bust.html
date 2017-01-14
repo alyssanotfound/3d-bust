@@ -20,11 +20,11 @@
     <!-- <script src="ConvexGeometry.js"></script> -->
     <script src="js/stats.min.js"></script>
     <!-- for magnifing library  -->
-    <!-- <script type="text/javascript" src="Event.js"></script> -->
-    <!-- <script type="text/javascript" src="Magnifier.js"></script> -->
+    <script type="text/javascript" src="js/Event.js"></script>
+    <script type="text/javascript" src="js/Magnifier.js"></script>
     <!-- for loader -->
     <!-- <script src="heartcode-canvasloader-min.js"></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="magnifier.css"> -->
+    <link rel="stylesheet" type="text/css" href="css/magnifier.css">
     <!-- <link rel='stylesheet' media='screen and (max-width: 700px)' href='css/mobile-style.css' /> -->
     <link rel="stylesheet" href="css/main-style.css">
     <!-- inner image zoom -->
@@ -35,16 +35,15 @@
 </head>
 <body>
     <div id="loadingOverlay"></div>
-    <div id="centerLine"></div>
+    <!-- <div id="centerLine"></div> -->
     <div id= "header"><span id="title">POKUASI</span><span id="cart">cart</span></div>
     <!-- <div id="stats"></div> -->
     <div id="layer2block">
         <div id="leftblock">  
+            <div id="leftblockTop">
             <img id= "closeButton" src="assets/x-button.png">
-        </div>
-        <div id="rightblock">
-            <div id="rightblockTop">
-                <h1>AO-09</h1>
+<!--                 <h1>AO-09</h1>
+                <h2>$295</h2>
                 <p>Material: Brass</p>
                 <p>Dimensions: 8" wide, left chain: 5.5", right chain: 4.5" </p>
                 <br>
@@ -55,11 +54,37 @@
                 
                 <br>
                 <p>Quantity: <input type="text" name="quantity" value="1"></p>
-                <p><button>Purchase</button></p>
+                <p><button>Purchase</button></p> -->
             </div>
-            <div id="rightblockBottom">
-                <img src="assets/2d-scan.png">
+            <!-- <div id="leftblockBottom"> -->
+                <!-- <img id="thumb" src="assets/2d-scan-I-thumb.png"> -->
+                <!-- <div class="magnifier-preview" id="preview">Preview appears here</div> -->
+            <!-- </div> -->
+            
+        </div>
+        <div id="centerblock">  
+            <div id="imgDisplay">
+                <img id="twoD-scan" src="assets/2d-scan.png">
             </div>
+            <div id="toggleView" class="centered"><span id="twod">2D</span> | <span id="threed">3D</span></div>
+            <div id="itemBox" class="centered"> 
+                <p id="itemName">AO-09</p>
+                <p id="itemPrice">$295</p>
+            </div>
+            <div id="buyButton" class="centered">PURCHASE</div>
+        </div>
+        <div id="rightblock">
+            <div id="infoButton">i</div>
+            <div id= "infoPanel">
+                <p>Material: Brass</p>
+                <p>Dimensions: 8" wide, left chain: 5.5", right chain: 4.5" </p>
+                <br>
+                <p>Production by <a target="_blank" href="http://www.crucible.nyc">Crucible</a></p>
+                <p>Casted by: Tony Owusu</p>
+                <p>Chain made by: James Aidoo</p>
+                <p>Edition of 12</p>
+            </div>
+            <!-- <div class="magnifier-preview" id="preview"></div> -->
         </div>
 
     </div>

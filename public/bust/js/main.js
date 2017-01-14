@@ -34,6 +34,9 @@ var rotateAligned = false;
 var elem;
 var leftelem;
 var baseelem;
+var centerelem;
+// var evt;
+var m;
 
 //for rotating bust
 var isDragging = false;
@@ -52,8 +55,8 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.x = 0.5;
-    camera.position.y = 0.08;
-    camera.position.z = 3.2;
+    camera.position.y = 0.03;
+    camera.position.z = 3.5;
 
     /* Scene */
 
@@ -124,9 +127,9 @@ function init() {
     window.addEventListener('resize', onWindowResize, false);
 
     //for dragging/rotating bust
-    document.getElementById("leftblock").onmousedown = function() {mouseDown()};
-    document.getElementById("leftblock").onmousemove = function() {mouseMove(event)};
-    document.getElementById("leftblock").onclick = function() {mouseDragOff()};
+    document.getElementById("imgDisplay").onmousedown = function() {mouseDown()};
+    document.getElementById("imgDisplay").onmousemove = function() {mouseMove(event)};
+    document.getElementById("imgDisplay").onclick = function() {mouseDragOff()};
 
     document.getElementById("canvasID").onclick = function() {onCanvasClick(event)};
     
@@ -134,16 +137,25 @@ function init() {
     document.getElementById("title").onclick = function() {goBackToLayerOne();};
     document.onkeydown = checkKey;
 
-    var centerline = document.getElementById("centerLine");
-    centerline.style.marginLeft = windowHalfX + "px";
+    //2D | 3D options
+    document.getElementById("twod").onclick = function() {display2DScan();};
+    document.getElementById("threed").onclick = function() {display3DScan();};
+
+    //info panel
+    document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
+    
+
+    // var centerline = document.getElementById("centerLine");
+    // centerline.style.marginLeft = windowHalfX + "px";
     //magnifier
-    // var evt = new Event();
-    // m = new Magnifier(evt);
+    var evt = new Event();
+    m = new Magnifier(evt);
 
     
     //stats
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
+
 window.onload = function() {
   init();
 };
@@ -205,7 +217,15 @@ function onWindowResize() {
     windowHalfY = window.innerHeight / 2;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();            
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight); 
+    // var previewWidth = document.getElementById("preview").clientWidth;
+    // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
+    // if (window.innerHeight < 700) {
+    //     console.log("height is less than 700");
+    // } else {
+        
+    // }
+    
 
 }
 
@@ -259,6 +279,9 @@ function goBackToLayerOne() {
     if (leftelem) {
         leftelem.style.display = "none";   
     }
+    if (centerelem) {
+        centerelem.style.display = "none";   
+    }
 
     turnOnAllBusts();
     autoRotate = true;
@@ -304,26 +327,50 @@ function layerTwoUI() {
         // m.attach({
         //     thumb: '#thumb',
         //     large: 'assets/2d-scan.png',
-        //     mode: 'inside',
-        //     zoom: 4,
-        //     zoomable: true
+        //     largeWrapper: 'preview',
+        //     mode: 'outside'
         // });
-
-        
 
     } else {
         if (autoRotate == true) {
-            testArray[bustOn].rotation.y -= 0.0002;   
+            testArray[bustOn].rotation.y -= 0.003;   
         }                
     }
 }
 
+function display2DScan() {
+    testArray[bustOn].visible = false;
+    document.getElementById("twoD-scan").style.display = "block";
+    document.getElementById("twod").style.fontFamily = "Avenir-Heavy";
+    document.getElementById("threed").style.fontFamily = "Avenir-Book";
+}
+
+function display3DScan() {
+    testArray[bustOn].visible = true;
+    document.getElementById("twoD-scan").style.display = "none";
+    document.getElementById("threed").style.fontFamily = "Avenir-Heavy";
+    document.getElementById("twod").style.fontFamily = "Avenir-Book";
+}
+
+function toggleInfoPanel() {
+    console.log("clicked info");
+    // var status = document.getElementById("infoPanel").style.display;
+    console.log(document.getElementById("infoPanel").style.display);
+    if (document.getElementById("infoPanel").style.display == "none" || document.getElementById("infoPanel").style.display == "") {
+        console.log("display block");
+        document.getElementById("infoPanel").style.display = "block";
+    } else if (document.getElementById("infoPanel").style.display != "none") {
+        console.log("display none");
+        document.getElementById("infoPanel").style.display = "none";
+    }
+
+}
 
 function isolateOneBust() {
     //define bustOn to be the center one based on max z position value
     pause = true;
     bustOn = findClosestBust();
-    testArray[bustOn].position.x = 0.34;
+    testArray[bustOn].position.x = 0.5;
     //testArray[bustOn].position.x = 0.5;
     turnOffOtherBusts(bustOn); 
 }
@@ -345,9 +392,14 @@ function openInfoPanel() {
     elem = document.getElementById('rightblock');
     baseelem = document.getElementById('layer2block');
     leftelem = document.getElementById('leftblock');
+    centerelem = document.getElementById('centerblock');
     elem.style.display = 'block';
     baseelem.style.display = 'block';
     leftelem.style.display = 'block';
+    centerelem.style.display = 'block';
+    // var previewWidth = document.getElementById("preview").clientWidth;
+    // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
+    // console.log(document.getElementById("preview").style.width);
     //inner zoom
     //new ImageZoom("img", {/*options*/});
     
@@ -409,9 +461,9 @@ function updateRevolution() {
 function findTargetTheta() {
     var evenInterval = (360/numModels);
     if (rotateAligned == false) {
-        console.log("align rotation once");
+        // console.log("align rotation once");
         var incrementTheta = (((Math.abs((theta-initialtheta)/evenInterval)) % 1)*evenInterval);
-        console.log("increment theta: " +incrementTheta);
+        // console.log("increment theta: " +incrementTheta);
         
         if (theta > 0 && revolveDirection == "left") {
             targetTheta = theta + evenInterval - incrementTheta;
@@ -436,8 +488,8 @@ function findTargetTheta() {
         }
     }
 
-    console.log("current theta: " + theta);
-    console.log("target theta: " + targetTheta);
+    // console.log("current theta: " + theta);
+    // console.log("target theta: " + targetTheta);
 }
 
 function rotateOneBustInterval() {
@@ -464,13 +516,13 @@ function rotateOneBustInterval() {
     }
 
     if (revolveDirection == "left" && (theta > targetTheta)) {
-        console.log("target reached, increasing theta");
+        // console.log("target reached, increasing theta");
         theta = targetTheta;
         pause = true;
         revolveClicked = false;
         
     } else if (revolveDirection == "right" && (theta < targetTheta)) {
-        console.log("target reached, decreasing theta");
+        // console.log("target reached, decreasing theta");
         theta = targetTheta;
         pause = true;
         revolveClicked = false;
