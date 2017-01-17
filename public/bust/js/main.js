@@ -35,6 +35,8 @@ var elem;
 var leftelem;
 var baseelem;
 var centerelem;
+
+var storedTexture = [];
 // var evt;
 var m;
 
@@ -133,8 +135,10 @@ function init() {
 
     document.getElementById("canvasID").onclick = function() {onCanvasClick(event)};
     
-    document.getElementById("closeButton").onclick = function() {goBackToLayerOne();};
+    // document.getElementById("closeButton").onclick = function() {goBackToLayerOne();};
     document.getElementById("title").onclick = function() {goBackToLayerOne();};
+    document.getElementById("leftblock").onclick = function() {goBackToLayerOne();};
+    document.getElementById("rightblock").onclick = function() {goBackToLayerOne();};
     document.onkeydown = checkKey;
 
     //2D | 3D options
@@ -142,8 +146,13 @@ function init() {
     document.getElementById("threed").onclick = function() {display3DScan();};
 
     //info panel
-    document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
-    
+    // document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
+    var infoPanel = document.getElementById('infoPanel');
+    infoPanel.addEventListener ('click',  function (e) {
+        console.log("clicked info panel");
+        e.stopPropagation();
+        // msg (elem);
+    }, false);
 
     // var centerline = document.getElementById("centerLine");
     // centerline.style.marginLeft = windowHalfX + "px";
@@ -352,19 +361,24 @@ function display3DScan() {
     document.getElementById("twod").style.fontFamily = "Avenir-Book";
 }
 
-function toggleInfoPanel() {
-    console.log("clicked info");
-    // var status = document.getElementById("infoPanel").style.display;
-    console.log(document.getElementById("infoPanel").style.display);
-    if (document.getElementById("infoPanel").style.display == "none" || document.getElementById("infoPanel").style.display == "") {
-        console.log("display block");
-        document.getElementById("infoPanel").style.display = "block";
-    } else if (document.getElementById("infoPanel").style.display != "none") {
-        console.log("display none");
-        document.getElementById("infoPanel").style.display = "none";
-    }
-
-}
+// function toggleInfoPanel() {
+//     console.log("clicked info");
+//     // var status = document.getElementById("infoPanel").style.display;
+//     console.log(document.getElementById("infoPanel").style.display);
+//     if (document.getElementById("infoPanel").style.display == "none" || document.getElementById("infoPanel").style.display == "") {
+//         console.log("display block");
+//         document.getElementById("infoPanel").style.display = "block";
+//         document.getElementById("horizLine").style.display = "block";
+//         document.getElementById("infoButton").style.borderColor = "#414141";
+//         document.getElementById("infoButton").style.color = "#414141";
+//     } else if (document.getElementById("infoPanel").style.display != "none") {
+//         console.log("display none");
+//         document.getElementById("infoPanel").style.display = "none";
+//         document.getElementById("horizLine").style.display = "none";
+//         document.getElementById("infoButton").style.borderColor = "#BCBCBB";
+//         document.getElementById("infoButton").style.color = "#BCBCBB";
+//     }
+// }
 
 function isolateOneBust() {
     //define bustOn to be the center one based on max z position value
@@ -413,20 +427,40 @@ function openInfoPanel() {
 
 
 function turnOffOtherBusts(keepOn) {
+    
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != keepOn) {
-            testArray[i].visible = false;
+            storedTexture[i] = testArray[i].children[0].material.map;
+            // testArray[i].visible = false;
+            testArray[i].children[0].material.transparent = true;
+            // testArray[i].children[0].material.opacity = "0.5";
+            testArray[i].children[0].material.wireframe = true;
+            testArray[i].children[0].material.color.setHex( 0xD3D3D3 );
+            testArray[i].children[0].material.map = null;
+            testArray[i].children[0].material.needsUpdate = true;
         }     
     }
+    //put transparent div in front of busts
+    // document.getElementById("loadingOverlay").style.display="block";
+
     allBustsOn = false;
 }
 
 function turnOnAllBusts() {
     for (var i = testArray.length - 1; i >= 0; i--) {
-        testArray[i].visible = true;   
+        if (i != bustOn) {
+            testArray[i].visible = true; 
+            testArray[i].children[0].material.wireframe = false;
+            testArray[i].children[0].material.map = storedTexture[i];
+            testArray[i].children[0].material.needsUpdate = true;
+            // testArray[i].children[0].material.transparent = true;
+            // testArray[i].children[0].material.opacity = "1.0";
+        }
+              
     }
     allBustsOn = true;
 }
+
 
 function updateRevolution() {
     var increment = 0.05; //changes speed
@@ -463,20 +497,23 @@ function findTargetTheta() {
     if (rotateAligned == false) {
         // console.log("align rotation once");
         var incrementTheta = (((Math.abs((theta-initialtheta)/evenInterval)) % 1)*evenInterval);
-        // console.log("increment theta: " +incrementTheta);
+         
+        // console.log("increment theta: " + incrementTheta);
+        // console.log("theta: " + theta);
         
         if (theta > 0 && revolveDirection == "left") {
             targetTheta = theta + evenInterval - incrementTheta;
         } else if (theta > 0 && revolveDirection == "right") {
             targetTheta = theta - incrementTheta;
         } else if (theta < 0 && revolveDirection == "left") {
-            targetTheta = theta + evenInterval - incrementTheta;
+            targetTheta = theta + incrementTheta;
         } else if (theta < 0 && revolveDirection == "right") {
-            targetTheta = theta - incrementTheta;
+            targetTheta = theta - (evenInterval - incrementTheta);
         } 
         rotateAligned = true;
     } else {
-        console.log("find next");
+        // console.log("find next");
+        // console.log("theta: " +theta);
         if (theta > 0 && revolveDirection == "left") {
             targetTheta = theta + evenInterval;
         } else if (theta > 0 && revolveDirection == "right") {
