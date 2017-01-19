@@ -23,7 +23,7 @@ var targetTheta;
 var pause = false;
 var revolveDirection = "left";
 var revolveClicked = false;
-
+var openLayerTwoDelay = false;
 
 //check or change when layer changes
 var firstOpen;
@@ -57,8 +57,8 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.x = 0.5;
-    camera.position.y = 0.03;
-    camera.position.z = 3.5;
+    camera.position.y = 0.07;
+    camera.position.z = 3.2;
 
     /* Scene */
 
@@ -70,22 +70,37 @@ function init() {
 
     keyLight = new THREE.DirectionalLight(new THREE.Color('hsl(30, 100%, 75%)'), 1.0);
     keyLight.position.set(-100, 0, 100);
+    // scene.add(keyLight);
 
     fillLight = new THREE.DirectionalLight(new THREE.Color('hsl(240, 100%, 75%)'), 0.75);
     fillLight.position.set(100, 0, 100);
+    // scene.add(fillLight);
 
     backLight = new THREE.DirectionalLight(0xffffff, 1.0);
     backLight.position.set(100, 0, -100).normalize();
+    // scene.add(backLight);
 
+    sunLight = new THREE.SpotLight( 0xffffff, 0, 0, Math.PI/2 );
+    sunLight.position.set( 1000, 2000, 1000 );
+    sunLight.castShadow = false;
+    scene.add( sunLight );
+
+    spotlight = new THREE.SpotLight( 0x0000ff, 0.6, 156, 0.01, 0.7, 1.6 );
+    spotlight.position.set(0.5,10,15);
+    spotlight.target.position.set(0.5,0,1.5);
+    spotlight.target.updateMatrixWorld();
+    spotlight.castShadow = false;
+    scene.add( spotlight );
 
     /* Generate 13 busts */
-    var paths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    var paths = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
         .map(function(value) {
             return "assets/2014-AO-" + value + "/";
         });
 
     function loadNextPath() {
         var pathToLoad = paths.pop();
+        // console.log(pathToLoad);
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
@@ -100,6 +115,8 @@ function init() {
                 objLoader.setMaterials(materials);
                 objLoader.setPath(pathToLoad);
                 objLoader.load('model_mesh.obj', function (obj) {
+                    obj.name = pathToLoad.substring(12, 17);
+                    console.log(obj.name);
                     testArray.push(obj);
                     scene.add(obj);  
                     loadNextPath(); 
@@ -136,7 +153,10 @@ function init() {
     document.getElementById("canvasID").onclick = function() {onCanvasClick(event)};
     
     // document.getElementById("closeButton").onclick = function() {goBackToLayerOne();};
-    document.getElementById("title").onclick = function() {goBackToLayerOne();};
+    document.getElementById("title").onclick = function() {
+        console.log("title clicked");
+        goBackToLayerOne();
+    };
     document.getElementById("leftblock").onclick = function() {goBackToLayerOne();};
     document.getElementById("rightblock").onclick = function() {goBackToLayerOne();};
     document.onkeydown = checkKey;
@@ -257,19 +277,36 @@ function onCanvasClick( event ) {
     
     var xClick = event.clientX;
 
-    if (layer == "one" && (xClick > (0.33*window.innerWidth)) && (xClick < ((0.66*window.innerWidth))) ){
+    if (layer == "one" && (xClick > (0.33*window.innerWidth)) && (xClick < ((0.66*window.innerWidth))) && rotateAligned == true ){
         //console.log("go to layer 2");
+        // if (rotateAligned == false) {
+        //     //click is in center more to the left
+        //     if (xClick < windowHalfX) {
+        //         revolveDirection = "left";
+        //     } else if (xClick > windowHalfX) {
+        //         revolveDirection = "right";
+        //     }
+        //     console.log("rotate bust to the center");
+        //     findTargetTheta();
+        //     rotateOneBustInterval(); 
+        // }
         layer = "two";
         firstOpen = true; //so that this first click doesnt trigger layer 3
 
     } 
+    if (layer == "one" && (xClick > (0.33*window.innerWidth)) && (xClick < ((0.66*window.innerWidth))) && rotateAligned == false ){
+        //open layer two after bust is aligned
+        openLayerTwoDelay = true;
+    } 
+
     if (layer == "one" && (xClick < windowHalfX) && revolveClicked == false) {
         //switch bc we assume if someone clicks on the model 
         //on the left it should move towards them
         revolveDirection = "right";
         findTargetTheta();
         revolveClicked = true;
-        } 
+    } 
+
     if (layer == "one" && (xClick >= windowHalfX) && revolveClicked == false) {
         //rotate right
         revolveDirection = "left";
@@ -278,7 +315,9 @@ function onCanvasClick( event ) {
     }
 }
 
-function goBackToLayerOne() {            
+function goBackToLayerOne() { 
+    console.log(testArray[bustOn].rotation.y);
+              
     if (baseelem) {
         baseelem.style.display = "none";   
     }
@@ -291,13 +330,17 @@ function goBackToLayerOne() {
     if (centerelem) {
         centerelem.style.display = "none";   
     }
-
+    display3DScan();
+    
     turnOnAllBusts();
     autoRotate = true;
-    revolveDirection = "left";
+    // revolveDirection = "left";
     layer = "one";
     pause = false;
     rotateAligned = false;
+    sunLight.intensity = 0.0;
+    spotlight.intensity = 0.6;
+    testArray[bustOn].rotation.y = -Math.PI/4; 
 }
 
 /* Core Animate Render Functions */
@@ -341,6 +384,7 @@ function layerTwoUI() {
         // });
 
     } else {
+        // console.log(testArray[bustOn].rotation.y);
         if (autoRotate == true) {
             testArray[bustOn].rotation.y -= 0.003;   
         }                
@@ -387,6 +431,8 @@ function isolateOneBust() {
     testArray[bustOn].position.x = 0.5;
     //testArray[bustOn].position.x = 0.5;
     turnOffOtherBusts(bustOn); 
+    sunLight.intensity = 0.3;
+    spotlight.intensity = 0.3;
 }
 
 function findClosestBust() {
@@ -403,6 +449,7 @@ function findClosestBust() {
 }
 
 function openInfoPanel() {
+    writeItemDescription(testArray[bustOn].name);
     elem = document.getElementById('rightblock');
     baseelem = document.getElementById('layer2block');
     leftelem = document.getElementById('leftblock');
@@ -411,6 +458,7 @@ function openInfoPanel() {
     baseelem.style.display = 'block';
     leftelem.style.display = 'block';
     centerelem.style.display = 'block';
+
     // var previewWidth = document.getElementById("preview").clientWidth;
     // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
     // console.log(document.getElementById("preview").style.width);
@@ -424,6 +472,28 @@ function openInfoPanel() {
 
 }
 
+function writeItemDescription(item) {
+
+    console.log(item);
+    
+    var result = AllItems.filter(function( obj ) {
+        // console.log(obj.name);
+        return obj.name === item;
+    });
+    console.log(result[0].chain);
+    document.getElementById('itemName').innerHTML = result[0].name;
+    document.getElementById('itemPrice').innerHTML = result[0].price;
+    document.getElementById('itemMaterial').innerHTML = "Material: " + result[0].material;
+    document.getElementById('itemDimensions').innerHTML = "Dimensions: " + result[0].dimensions;
+    document.getElementById('itemCast').innerHTML = "Casted by: " + result[0].casted;
+    if (result[0].chain != undefined) {
+        document.getElementById('itemChain').innerHTML = "Chain made by: " + result[0].chain;
+    } else if (result[0].chain == undefined) {
+        document.getElementById('itemChain').innerHTML = "";
+    }
+    document.getElementById('itemEdition').innerHTML = "Edition of " + result[0].edition;
+    document.getElementById('twoD-scan').src = "assets/2D-scans/" + result[0].name + ".jpg";
+}
 
 
 function turnOffOtherBusts(keepOn) {
@@ -434,7 +504,7 @@ function turnOffOtherBusts(keepOn) {
             // testArray[i].visible = false;
             testArray[i].children[0].material.transparent = true;
             // testArray[i].children[0].material.opacity = "0.5";
-            testArray[i].children[0].material.wireframe = true;
+            // testArray[i].children[0].material.wireframe = true;
             testArray[i].children[0].material.color.setHex( 0xD3D3D3 );
             testArray[i].children[0].material.map = null;
             testArray[i].children[0].material.needsUpdate = true;
@@ -450,7 +520,7 @@ function turnOnAllBusts() {
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != bustOn) {
             testArray[i].visible = true; 
-            testArray[i].children[0].material.wireframe = false;
+            // testArray[i].children[0].material.wireframe = false;
             testArray[i].children[0].material.map = storedTexture[i];
             testArray[i].children[0].material.needsUpdate = true;
             // testArray[i].children[0].material.transparent = true;
@@ -476,12 +546,15 @@ function updateRevolution() {
     
     var radians = toRadians(theta);
     var radianPosition = 2*Math.PI/numModels;
-
+    if (bustOn != undefined) {
+        console.log("see when pos changes after closing: " + radians);
+    }
 
     for (var i = testArray.length - 1; i >= 0; i--) {
         testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
         testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
         testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
+        // console.log(testArray[i].rotation.y);
     }
 
     // for (var i = testArray.length - 1; i >= 0; i--) {
@@ -557,12 +630,22 @@ function rotateOneBustInterval() {
         theta = targetTheta;
         pause = true;
         revolveClicked = false;
+        if (openLayerTwoDelay == true) {
+            layer = "two";
+            firstOpen = true;
+            openLayerTwoDelay = false;
+        }
         
     } else if (revolveDirection == "right" && (theta < targetTheta)) {
         // console.log("target reached, decreasing theta");
         theta = targetTheta;
         pause = true;
         revolveClicked = false;
+        if (openLayerTwoDelay == true) {
+           layer = "two";
+            firstOpen = true; 
+            openLayerTwoDelay = false;
+        }
 
     }
 

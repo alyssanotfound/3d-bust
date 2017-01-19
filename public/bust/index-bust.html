@@ -32,6 +32,7 @@
     <script src="js/image_zoom.js"></script>
     <!-- load your js after all dependencies are loaded -->
     <script src="js/main.js"></script>
+    <script src="js/itemDescriptions.js"></script>
 </head>
 <body>
     <div id="loadingOverlay"></div>
@@ -64,27 +65,28 @@
         </div>
         <div id="centerblock">  
             <div id="imgDisplay">
-                <img id="twoD-scan" src="assets/2d-scan.png">
+                <img id="twoD-scan" src="">
             </div>
             <div id="toggleView" class="centered"><span id="twod">2D</span> | <span id="threed">3D</span></div>
-            <div id="itemBox" class="centered"> 
-                <p id="itemName">AO-09</p>
-                <p id="itemPrice">$295</p>
-            </div>
-            <div id="buyButton" class="centered">PURCHASE</div>
+            
         </div>
         <div id="rightblock">
             <!-- <div id="infoButton">i</div> -->
             <!-- <div id="horizLine"><hr /></div> -->
+            <div id="itemBox"> 
+                <p id="itemName"></p>
+                <p id="itemPrice"></p>
+            </div>
             <div id= "infoPanel">
-                <p>Material: Brass</p>
-                <p>Dimensions: 8" wide, left chain: 5.5", right chain: 4.5" </p>
+                <p id="itemMaterial"></p>
+                <p id="itemDimensions"></p>
                 <br>
                 <p>Production by <a target="_blank" href="http://www.crucible.nyc">Crucible</a></p>
-                <p>Casted by: Tony Owusu</p>
-                <p>Chain made by: James Aidoo</p>
-                <p>Edition of 12</p>
+                <p id="itemCast"></p>
+                <p id="itemChain"></p>
+                <p id="itemEdition"></p>
             </div>
+            <div id="buyButton">PURCHASE</div>
             <!-- <div class="magnifier-preview" id="preview"></div> -->
         </div>
 
