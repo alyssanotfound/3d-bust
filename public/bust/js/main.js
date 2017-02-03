@@ -185,8 +185,6 @@ function init() {
     document.getElementById("twod").onclick = function() {display2DScan();};
     document.getElementById("threed").onclick = function() {display3DScan();};
 
-    //info panel
-    // document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
     var infoPanel = document.getElementById('infoPanel');
     infoPanel.addEventListener ('click',  function (e) {
         console.log("clicked info panel");
@@ -194,7 +192,28 @@ function init() {
         // msg (elem);
     }, false);
 
+    //info panel
+    // document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
+    var itemBox = document.getElementById('itemBox');
+    itemBox.addEventListener ('click',  function (e) {
+        e.stopPropagation();
+        // msg (elem);
+    }, false);
 
+    //var buyButton = document.getElementById('product-component-21fa7a5ac51');
+    // buyButton.addEventListener ('click',  function (e) {
+    //     console.log("clicked buy button");
+    //     e.stopPropagation();
+    //     // msg (elem);
+    // }, false);
+
+    window.onpopstate=function() {
+        if (currentURL != "") {
+            goBackToLayerOne();
+        }
+        
+
+    }
 
     // var centerline = document.getElementById("centerLine");
     // centerline.style.marginLeft = windowHalfX + "px";

@@ -232,7 +232,7 @@ html {
   color: #414141;
 }
 
-#buyButton {
+/*#product-component-21fa7a5ac51 {
   width: 75%;
   display: block;
   float: left;
@@ -242,14 +242,13 @@ html {
   color: white;
   text-align: center;
   padding: 0.8rem;
- /* position: absolute;
-  bottom: 0;*/
+
   
 }
 
-#buyButton:hover {
+#product-component-21fa7a5ac51:hover {
   cursor: pointer;
-}
+}*/
 
 /*#infoButton {
   display: block;
@@ -277,7 +276,7 @@ html {
   width: 75%;
   float: left;
   display: block;
-  padding: 0.8rem;
+  padding: 4%;
   background-color: #FFFFFF;
   opacity: 0.8;
   border-bottom: 1px solid #BCBCBB;
@@ -289,7 +288,7 @@ html {
   clear: both;
   width: 75%;
   display: block;
-  padding: 0.8rem;
+  padding: 4%;
   height: 1em;
 }
 /*hr { 
@@ -415,3 +414,14 @@ h2 {
     width: 1px;
     z-index:999999;
 }*/
+
+/*shopify style edits*/
+
+.shopify-buy__cart-item__image {
+  background-color: red;
+  /*background-image: url(../assets/2D-scans/AO-01.jpg);*/
+}
+
+
+
+
