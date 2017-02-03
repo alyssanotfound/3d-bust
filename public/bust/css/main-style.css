@@ -108,8 +108,8 @@ br {
 #cart {
     font-size: 9pt;
     float: right;
-    padding-right: 2%;
-    padding-top: 1.5%;
+    padding-right: 1.4%;
+    padding-top: 1%;
 }
 
 #cart:hover {
@@ -415,12 +415,10 @@ h2 {
     z-index:999999;
 }*/
 
-/*shopify style edits*/
-
-.shopify-buy__cart-item__image {
-  background-color: red;
-  /*background-image: url(../assets/2D-scans/AO-01.jpg);*/
+button {
+  outline: none;
 }
+
 
 
 

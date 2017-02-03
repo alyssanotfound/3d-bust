@@ -46,40 +46,40 @@ var scriptURL = 'js/buy-button-storefront.js';
               "button": "PURCHASE"
             },
             // "styles": {
-              // "product": {
-                // "text-align": "center",
-                // "@media (min-width: 601px)": {
-                //   "max-width": "100%",
-                //   "margin-left": "0",
-                //   "margin-bottom": "50px"
-                // }
-              // },
-              // "button": {
-                // "background-color": "#000000",
-                // "font-size": "15px",
-                // "padding-top": "15.5px",
-                // "padding-bottom": "15.5px",
-                // ":hover": {
-                //   "background-color": "#000000"
-                // },
-                // ":focus": {
-                //   "background-color": "#000000"
-                // }
-              // },
-              // "title": {
-              //   "font-size": "26px"
-              // },
-              // "price": {
-              //   "font-size": "18px"
-              // },
-              // "quantityInput": {
-              //   "font-size": "15px",
-              //   "padding-top": "15.5px",
-              //   "padding-bottom": "15.5px"
-              // },
-              // "compareAt": {
-              //   "font-size": "15px"
-              // }
+            //   "product": {
+            //     "text-align": "center",
+            //     "@media (min-width: 601px)": {
+            //       "max-width": "100%",
+            //       "margin-left": "0",
+            //       "margin-bottom": "50px"
+            //     }
+            //   },
+            //   "button": {
+            //     "background-color": "#000000",
+            //     "font-size": "15px",
+            //     "padding-top": "15.5px",
+            //     "padding-bottom": "15.5px",
+            //     ":hover": {
+            //       "background-color": "#000000"
+            //     },
+            //     ":focus": {
+            //       "background-color": "#000000"
+            //     }
+            //   },
+            //   "title": {
+            //     "font-size": "26px"
+            //   },
+            //   "price": {
+            //     "font-size": "18px"
+            //   },
+            //   "quantityInput": {
+            //     "font-size": "15px",
+            //     "padding-top": "15.5px",
+            //     "padding-bottom": "15.5px"
+            //   },
+            //   "compareAt": {
+            //     "font-size": "15px"
+            //   }
             // }
           },
           "cart": {
@@ -92,21 +92,21 @@ var scriptURL = 'js/buy-button-storefront.js';
               "empty": "Nothing to purchase."
             },
             // "styles": {
-              // "button": {
-                // "background-color": "#000000",
-                // "font-size": "15px",
-                // "padding-top": "15.5px",
-                // "padding-bottom": "15.5px",
-                // ":hover": {
-                //   "background-color": "#000000"
-                // },
-                // ":focus": {
-                //   "background-color": "#000000"
-                // }
-              // },
-              // "footer": {
-                // "background-color": "#ffffff"
-              // }
+            //   "button": {
+            //     "background-color": "#000000",
+            //     "font-size": "15px",
+            //     "padding-top": "15.5px",
+            //     "padding-bottom": "15.5px",
+            //     ":hover": {
+            //       "background-color": "#000000"
+            //     },
+            //     ":focus": {
+            //       "background-color": "#000000"
+            //     }
+            //   },
+            //   "footer": {
+            //     "background-color": "#ffffff"
+            //   }
             }
           },
           "modalProduct": {
