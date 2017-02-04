@@ -1,3 +1,4 @@
+
 var scriptURL = 'js/buy-button-storefront.js';
   if (window.ShopifyBuy) {
     if (window.ShopifyBuy.UI) {
@@ -14,10 +15,11 @@ var scriptURL = 'js/buy-button-storefront.js';
     script.async = true;
     script.src = scriptURL;
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
-    script.onload = ShopifyBuyInit;
+    // script.onload = ShopifyBuyInit;
+    // only call ShopifyBuyInit() when layer 2 is opened
   }
 
-  function ShopifyBuyInit() {
+  function ShopifyBuyInit(item) {
     var client = ShopifyBuy.buildClient({
       domain: 'pokuasi-nyc.myshopify.com',
       apiKey: '453c9aa5993da2560880882cd6f4eb67',
@@ -25,9 +27,23 @@ var scriptURL = 'js/buy-button-storefront.js';
     });
 
     ShopifyBuy.UI.onReady(client).then(function (ui) {
+      
+      console.log("fnd this name: " + item);
+      var result = AllItems.filter(function( obj ) {
+        
+        // console.log(obj.name);
+        return obj.name === item;
+      });
+      
+      var buttonNode = document.getElementById(result[0].buttonID);
+      
+      while (buttonNode.hasChildNodes()) {
+        document.getElementById(result[0].buttonID).removeChild(buttonNode.lastChild);
+      }
+      console.log(buttonNode);
       ui.createComponent('product', {
-        id: [9393870467],
-        node: document.getElementById('product-component-21fa7a5ac51'),
+        id: result[0].shopifyID,
+        node: buttonNode,
         moneyFormat: '%24%7B%7Bamount%7D%7D',
         options: {
           "product": {

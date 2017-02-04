@@ -114,10 +114,10 @@ function init() {
                 //then change variable so bustOn will be opened
                 var evenInterval = (360/numModels);
                 targetTheta = theta + (evenInterval*incrementBustMatch[Number(URLbust)]);
-                console.log("URL: " + currentURL);
-                console.log("URLbust/bustOn: " + URLbust);
-                console.log("URLbust: " + incrementBustMatch[Number(URLbust)]);
-                console.log("targetTheta: " + targetTheta);
+                // console.log("URL: " + currentURL);
+                // console.log("URLbust/bustOn: " + URLbust);
+                // console.log("URLbust: " + incrementBustMatch[Number(URLbust)]);
+                // console.log("targetTheta: " + targetTheta);
                 rotateAligned = true;
                 // rotate bust 
                 revolveClicked = true;
@@ -224,6 +224,9 @@ function init() {
     //URL
     currentURL = window.location.hash;
 
+    //SHOPIFY BUTTONS
+    //make a function so that the id is generated based on the item number
+    document.getElementById("buyButtonWrapper").firstChild.id = "product-component-21fa7a5ac51";
 
     //stats
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
@@ -462,7 +465,7 @@ function updateURL() {
     if (bustOn == undefined) {
         bustOn = findClosestBust();   
     }
-    console.log(testArray[bustOn].name);
+    // console.log(testArray[bustOn].name);
     history.pushState("", "", "#" + testArray[bustOn].name);
     currentURL = window.location.hash;
 }
@@ -517,12 +520,14 @@ function openInfoPanel() {
 
 function writeItemDescription(item) {
 
-    console.log("item opened: " + item);
-    
+    // console.log("item opened: " + item);
+
     var result = AllItems.filter(function( obj ) {
         // console.log(obj.name);
         return obj.name === item;
     });
+    //assign associated shopify button
+    document.getElementById("buyButtonWrapper").firstChild.id = result[0].buttonID;
     // console.log(result[0].chain);
     document.getElementById('itemName').innerHTML = result[0].name;
     document.getElementById('itemPrice').innerHTML = result[0].price;
@@ -536,6 +541,7 @@ function writeItemDescription(item) {
     }
     document.getElementById('itemEdition').innerHTML = "Edition of " + result[0].edition;
     document.getElementById('twoD-scan').src = "/public/bust/assets/2D-scans/" + result[0].name + ".jpg";
+    ShopifyBuyInit(item);
 }
 
 
