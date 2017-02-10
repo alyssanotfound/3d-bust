@@ -1,6 +1,4 @@
-if (!Detector.webgl) {
-    Detector.addGetWebGLMessage();
-}
+
 
 var container;
 
@@ -49,11 +47,14 @@ var previousMousePosition = {
 };
 
 
-function init() {
+function initDesktop() {
 
     container = document.createElement('div');
     document.body.appendChild(container);
 
+    if (!Detector.webgl) {
+        Detector.addGetWebGLMessage();
+    }
     /* Camera */
 
     camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
@@ -208,9 +209,9 @@ function init() {
     // }, false);
 
     window.onpopstate=function() {
-        if (currentURL != "") {
+        // if (currentURL != "") {
             goBackToLayerOne();
-        }
+        // }
         
 
     }
@@ -226,14 +227,23 @@ function init() {
 
     //SHOPIFY BUTTONS
     //make a function so that the id is generated based on the item number
-    document.getElementById("buyButtonWrapper").firstChild.id = "product-component-21fa7a5ac51";
+    // document.getElementById("buyButtonWrapper").firstChild.id = "product-component-21fa7a5ac51";
 
     //stats
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
 
+
 window.onload = function() {
-  init();
+    console.log("start onload");
+    console.log(window.outerWidth);
+    if (window.outerWidth > 700) {
+        console.log("desktop detected");
+        initDesktop(); 
+    } else {
+        console.log("mobile detected");
+        initDesktop(); 
+    }
 };
 
 function checkURL() {
@@ -450,6 +460,7 @@ function layerTwoUI() {
 function display2DScan() {
     testArray[bustOn].visible = false;
     document.getElementById("twoD-scan").style.display = "block";
+    document.getElementById("threeD-gif").style.display = "none";
     document.getElementById("twod").style.fontFamily = "Avenir-Heavy";
     document.getElementById("threed").style.fontFamily = "Avenir-Book";
 }
@@ -457,6 +468,7 @@ function display2DScan() {
 function display3DScan() {
     testArray[bustOn].visible = true;
     document.getElementById("twoD-scan").style.display = "none";
+    document.getElementById("threeD-gif").style.display = "block";
     document.getElementById("threed").style.fontFamily = "Avenir-Heavy";
     document.getElementById("twod").style.fontFamily = "Avenir-Book";
 }
@@ -541,6 +553,7 @@ function writeItemDescription(item) {
     }
     document.getElementById('itemEdition').innerHTML = "Edition of " + result[0].edition;
     document.getElementById('twoD-scan').src = "/public/bust/assets/2D-scans/" + result[0].name + ".jpg";
+    document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/01.png";
     ShopifyBuyInit(item);
 }
 
@@ -707,3 +720,21 @@ function toRadians(angle) {
 function toDegrees(angle) {
     return angle * (180 / Math.PI);
 }
+
+// MOBILE FUNCTIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

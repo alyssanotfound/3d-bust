@@ -28,7 +28,7 @@ var scriptURL = 'js/buy-button-storefront.js';
 
     ShopifyBuy.UI.onReady(client).then(function (ui) {
       
-      console.log("fnd this name: " + item);
+      // console.log("fnd this name: " + item);
       var result = AllItems.filter(function( obj ) {
         
         // console.log(obj.name);
@@ -40,7 +40,7 @@ var scriptURL = 'js/buy-button-storefront.js';
       while (buttonNode.hasChildNodes()) {
         document.getElementById(result[0].buttonID).removeChild(buttonNode.lastChild);
       }
-      console.log(buttonNode);
+      // console.log(buttonNode);
       ui.createComponent('product', {
         id: result[0].shopifyID,
         node: buttonNode,

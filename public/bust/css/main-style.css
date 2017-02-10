@@ -1,11 +1,11 @@
-@media only screen and (max-width: 800px) {
-    body {
-        background-color: lightblue;
-    }
-    #canvasID {
-        display:none;
-    }
-}
+
+
+/*@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 480px)
+  and (-webkit-min-device-pixel-ratio: 2) {
+
+}*/
 
 @font-face {
   font-family: 'Lucida Grande';
@@ -89,7 +89,7 @@ br {
     position: absolute;
     color: black;
     z-index: 999999;
-    height: 6%;
+    height: 32px;
     width: 100%;
     /*padding: 5px;*/
 }
@@ -97,8 +97,8 @@ br {
 #title {
     font-family: TheSansMono-Plain, sans-serif;
     float: left;
-    padding-left: 1%;
-    padding-top: 1%;
+    padding-left: 7px;
+    padding-top: 7px;
 }
 
 #title:hover {
@@ -108,8 +108,8 @@ br {
 #cart {
     font-size: 9pt;
     float: right;
-    padding-right: 1.4%;
-    padding-top: 1%;
+    padding-right: 7px;
+    padding-top: 7px;
 }
 
 #cart:hover {
@@ -149,7 +149,7 @@ html {
   z-index:99999;
   width: 22%;
   height: 100%;
-  /*border: 1px solid green;*/
+  border: 1px solid green;
   float: left;
   /*background-color: white;
   opacity: 0.5;*/
@@ -159,7 +159,7 @@ html {
   z-index:99999;
   width: 23%;
   height: 100%;
-  /*border: 1px solid blue;*/
+  border: 1px solid blue;
   float: right;
   /*background-color: white;
   opacity: 0.5;*/
@@ -170,7 +170,7 @@ html {
   z-index:99999;
   width: 54%;
   height: 100%;
-  /*border: 1px solid pink;*/
+  border: 1px solid pink;
   float: left;
 }
 
@@ -181,12 +181,22 @@ html {
   /*border: 1px solid red;*/
 }
 
-#twoD-scan {
-  height: 100%;
-  width: auto;
+#twoD-scan{
+  width: 80%;
+  height: auto;
   /*display: block;*/
   margin: 0 auto;
   display: none;
+  margin-top: 10%;
+}
+
+#threeD-gif{
+  width: 100%;
+  height: auto;
+  /*display: block;*/
+  margin: 0 auto;
+  display: block;
+  margin-top: 20px;
 }
 
 #centerblock div {
@@ -419,7 +429,58 @@ button {
   outline: none;
 }
 
+ .shopify-buy__cart-toggle__count {
+    padding-right: 7px !important;
+  }
 
+@media only screen 
+  and (max-width: 500px) {
+
+    #canvasID {
+      display:none;
+    }
+    #leftblock {
+      width: 0px;
+      border: none;
+    }
+    #centerblock {
+      width:100%;
+    }
+    #rightblock {
+      width: 100%;
+      float: left;
+      height: auto;
+    }
+    body {
+      overflow: scroll;
+    }
+    #itemBox {
+      width: 92%;
+    }
+    #infoPanel {
+      width: 92%;
+    }
+
+    .shopify-buy-frame--product {
+      width: 100% !important;
+    }
+
+    div.is-sticky .shopify-buy__cart-toggle__count {
+      color: white !important;
+    }
+
+    #header {
+      color: white;
+      background-color: black;
+    }
+
+    #twoD-scan {
+      margin-top:5%;
+    }
+    #imgDisplay {
+      height: 82%;
+    }
+}
 
 
 
