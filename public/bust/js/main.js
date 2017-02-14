@@ -1,5 +1,5 @@
 
-
+var isMobile;
 var container;
 
 //not triggered by layer change
@@ -46,6 +46,18 @@ var previousMousePosition = {
     y: 0
 };
 
+function init() {
+    /* Events - Mobile and Desktop */
+    window.addEventListener('resize', onWindowResize, false);
+    document.getElementById("title").onclick = function() {
+        console.log("title clicked");
+        goBackToLayerOne();
+    };
+    //2D | 3D options
+    document.getElementById("twod").onclick = function() {display2DScan();};
+    document.getElementById("threed").onclick = function() {display3DScan();};
+
+}
 
 function initDesktop() {
 
@@ -106,11 +118,12 @@ function initDesktop() {
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
-            document.getElementById("loadingOverlay").style.display="none";
+            // document.getElementById("loadingOverlay").style.display="none";
             if (currentURL != "") {
                 //load specific piece
                 var URLbust = 13 - currentURL.substring(4, 6);
-                //console.log("the current URL / model num is: " + bustOn);
+                // console.log(currentURL.substring(1, 6));
+                console.log("the current URL / model num is: " + URLbust);
                 //now rotate busts to proper position
                 //then change variable so bustOn will be opened
                 var evenInterval = (360/numModels);
@@ -124,6 +137,10 @@ function initDesktop() {
                 revolveClicked = true;
                 //open layer 2
                 openLayerTwoDelay = true;
+                if (isMobile == true) {
+                    openInfoPanel(currentURL.substring(1, 6));
+                    // writeItemDescription(currentURL.substring(1, 6));
+                }
                 //layer = "two";
             }
         } else {
@@ -145,10 +162,11 @@ function initDesktop() {
             });
         }
     }
-
     loadNextPath();
 
-    
+
+    //URL
+    currentURL = window.location.hash;
 
     /* Vectors */
     raycaster = new THREE.Raycaster();
@@ -162,30 +180,18 @@ function initDesktop() {
     //console.log(renderer.domElement);
     container.appendChild(renderer.domElement);
 
-    /* Events */
-
-    window.addEventListener('resize', onWindowResize, false);
-
+    console.log(isMobile);
+    
+    /* Events - Desktop Only */
     //for dragging/rotating bust
     document.getElementById("imgDisplay").onmousedown = function() {mouseDown()};
     document.getElementById("imgDisplay").onmousemove = function() {mouseMove(event)};
     document.getElementById("imgDisplay").onclick = function() {mouseDragOff()};
-
     document.getElementById("canvasID").onclick = function() {onCanvasClick(event)};
-    
-    // document.getElementById("closeButton").onclick = function() {goBackToLayerOne();};
-    document.getElementById("title").onclick = function() {
-        console.log("title clicked");
-        goBackToLayerOne();
-    };
     document.getElementById("leftblock").onclick = function() {goBackToLayerOne();};
     document.getElementById("rightblock").onclick = function() {goBackToLayerOne();};
     document.onkeydown = checkKey;
-
-    //2D | 3D options
-    document.getElementById("twod").onclick = function() {display2DScan();};
-    document.getElementById("threed").onclick = function() {display3DScan();};
-
+  
     var infoPanel = document.getElementById('infoPanel');
     infoPanel.addEventListener ('click',  function (e) {
         console.log("clicked info panel");
@@ -216,14 +222,14 @@ function initDesktop() {
 
     }
 
+
     // var centerline = document.getElementById("centerLine");
     // centerline.style.marginLeft = windowHalfX + "px";
     //magnifier
     var evt = new Event();
     m = new Magnifier(evt);
 
-    //URL
-    currentURL = window.location.hash;
+    
 
     //SHOPIFY BUTTONS
     //make a function so that the id is generated based on the item number
@@ -233,16 +239,35 @@ function initDesktop() {
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
 
+function initMobile() {
+    console.log("mobile detected");
+    var updateClass = document.getElementById("twoD-scan");
+    if(updateClass) {
+        updateClass.className += updateClass.className ? 'mobile' : 'mobile';
+    }
+    //URL
+    currentURL = window.location.hash;
+
+    if (isMobile == true) {
+        openInfoPanel(currentURL.substring(1, 6));
+        // writeItemDescription(currentURL.substring(1, 6));
+    }
+}
 
 window.onload = function() {
     console.log("start onload");
     console.log(window.outerWidth);
-    if (window.outerWidth > 700) {
+    if (window.outerWidth > 500) {
+        isMobile = false;
         console.log("desktop detected");
-        initDesktop(); 
+        initDesktop();
+        init(); 
+        
     } else {
+        isMobile = true;
         console.log("mobile detected");
-        initDesktop(); 
+        initMobile();
+        init();
     }
 };
 
@@ -437,10 +462,9 @@ function render() {
 function layerTwoUI() {
     if (allBustsOn == true) {
         //check if main page is loaded
-        //change URL and make it trigger these functions
         updateURL();
         isolateOneBust();
-        openInfoPanel();
+        openInfoPanel(testArray[bustOn].name);
 
         // m.attach({
         //     thumb: '#thumb',
@@ -458,17 +482,25 @@ function layerTwoUI() {
 }
 
 function display2DScan() {
-    testArray[bustOn].visible = false;
+    
+    if (isMobile == false) {
+        testArray[bustOn].visible = false;   
+    } else if (isMobile == true) {
+        document.getElementById("threeD-gif").style.display = "none";  
+    }
     document.getElementById("twoD-scan").style.display = "block";
-    document.getElementById("threeD-gif").style.display = "none";
     document.getElementById("twod").style.fontFamily = "Avenir-Heavy";
     document.getElementById("threed").style.fontFamily = "Avenir-Book";
 }
 
 function display3DScan() {
-    testArray[bustOn].visible = true;
+    if (isMobile == false) {
+        testArray[bustOn].visible = true;
+        document.getElementById("threeD-gif").style.display = "none";    
+    } else if (isMobile == true) {
+        document.getElementById("threeD-gif").style.display = "block";  
+    }
     document.getElementById("twoD-scan").style.display = "none";
-    document.getElementById("threeD-gif").style.display = "block";
     document.getElementById("threed").style.fontFamily = "Avenir-Heavy";
     document.getElementById("twod").style.fontFamily = "Avenir-Book";
 }
@@ -506,8 +538,9 @@ function findClosestBust() {
     return closestBust;
 }
 
-function openInfoPanel() {
-    writeItemDescription(testArray[bustOn].name);
+function openInfoPanel(item) {
+    console.log(item);
+    writeItemDescription(item);
     elem = document.getElementById('rightblock');
     baseelem = document.getElementById('layer2block');
     leftelem = document.getElementById('leftblock');
@@ -532,7 +565,7 @@ function openInfoPanel() {
 
 function writeItemDescription(item) {
 
-    // console.log("item opened: " + item);
+    console.log("writeItemDescription: " + item);
 
     var result = AllItems.filter(function( obj ) {
         // console.log(obj.name);
@@ -553,7 +586,12 @@ function writeItemDescription(item) {
     }
     document.getElementById('itemEdition').innerHTML = "Edition of " + result[0].edition;
     document.getElementById('twoD-scan').src = "/public/bust/assets/2D-scans/" + result[0].name + ".jpg";
-    document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/01.png";
+    if (isMobile == true) {
+        document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/01.png";
+    }
+    
+
+    
     ShopifyBuyInit(item);
 }
 

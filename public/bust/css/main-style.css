@@ -182,11 +182,15 @@ html {
 }
 
 #twoD-scan{
-  width: 80%;
+  width: 68%;
   height: auto;
   /*display: block;*/
   margin: 0 auto;
   display: none;
+}
+
+#twoD-scan.mobile{
+  width: 80%;
   margin-top: 10%;
 }
 
