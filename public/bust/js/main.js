@@ -118,7 +118,7 @@ function initDesktop() {
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
-            // document.getElementById("loadingOverlay").style.display="none";
+            document.getElementById("loadingOverlay").style.display="none";
             if (currentURL != "") {
                 //load specific piece
                 var URLbust = 13 - currentURL.substring(4, 6);
@@ -201,7 +201,7 @@ function initDesktop() {
 
     //info panel
     // document.getElementById("infoButton").onclick = function() {toggleInfoPanel();};
-    var itemBox = document.getElementById('itemBox');
+    var itemBox = document.getElementById('itemBox-bottom');
     itemBox.addEventListener ('click',  function (e) {
         e.stopPropagation();
         // msg (elem);
@@ -240,30 +240,40 @@ function initDesktop() {
 }
 
 function initMobile() {
+
     console.log("mobile detected");
-    var updateClass = document.getElementById("twoD-scan");
+    // var updateClass = document.getElementById("twoD-scan");
+    // if(updateClass) {
+    //     updateClass.className += updateClass.className ? 'mobile' : 'mobile';
+    // }
+    var updateClass = document.getElementById("centerblock");
     if(updateClass) {
-        updateClass.className += updateClass.className ? 'mobile' : 'mobile';
+        updateClass.className += updateClass.className ? ' mobile' : ' mobile';
     }
     //URL
     currentURL = window.location.hash;
-
-    if (isMobile == true) {
+    if (currentURL != "") {
+        // console.log("load specific URL");
         openInfoPanel(currentURL.substring(1, 6));
         // writeItemDescription(currentURL.substring(1, 6));
+    } else {
+        // console.log("load first item");
+        openInfoPanel("AO-01");
     }
+
 }
 
 window.onload = function() {
     console.log("start onload");
     console.log(window.outerWidth);
-    if (window.outerWidth > 500) {
+    if (window.outerWidth > 650) {
         isMobile = false;
         console.log("desktop detected");
         initDesktop();
         init(); 
         
     } else {
+        document.getElementById("loadingOverlay").style.display="none";
         isMobile = true;
         console.log("mobile detected");
         initMobile();
@@ -574,8 +584,10 @@ function writeItemDescription(item) {
     //assign associated shopify button
     document.getElementById("buyButtonWrapper").firstChild.id = result[0].buttonID;
     // console.log(result[0].chain);
-    document.getElementById('itemName').innerHTML = result[0].name;
-    document.getElementById('itemPrice').innerHTML = result[0].price;
+    document.getElementById('itemBox-top').style.display = "none";
+    document.getElementById('itemBox-bottom').style.display = "block";
+    document.getElementById('itemName-bottom').innerHTML = result[0].name;
+    document.getElementById('itemPrice-bottom').innerHTML = result[0].price;
     document.getElementById('itemMaterial').innerHTML = "Material: " + result[0].material;
     document.getElementById('itemDimensions').innerHTML = "Dimensions: " + result[0].dimensions;
     document.getElementById('itemCast').innerHTML = "Casted by: " + result[0].casted;
@@ -587,6 +599,10 @@ function writeItemDescription(item) {
     document.getElementById('itemEdition').innerHTML = "Edition of " + result[0].edition;
     document.getElementById('twoD-scan').src = "/public/bust/assets/2D-scans/" + result[0].name + ".jpg";
     if (isMobile == true) {
+        document.getElementById('itemBox-top').style.display = "block";
+        document.getElementById('itemBox-bottom').style.display = "none";
+        document.getElementById('itemName-top').innerHTML = result[0].name;
+        document.getElementById('itemPrice-top').innerHTML = result[0].price;
         document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/01.png";
     }
     

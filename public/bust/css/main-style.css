@@ -85,6 +85,12 @@ br {
    margin: 5px 0;
 }
 
+#loadingOverlay {
+    font-size: 40px;
+    color: white;
+    font-family: TheSansMono-Plain, sans-serif;
+}
+
 #header {
     position: absolute;
     color: black;
@@ -181,6 +187,11 @@ html {
   /*border: 1px solid red;*/
 }
 
+#centerblock.mobile #imgDisplay {  
+  height: 89%;
+}
+
+
 #twoD-scan{
   width: 68%;
   height: auto;
@@ -189,18 +200,23 @@ html {
   display: none;
 }
 
-#twoD-scan.mobile{
+#centerblock.mobile #twoD-scan{
   width: 80%;
   margin-top: 10%;
 }
 
 #threeD-gif{
-  width: 100%;
+  width: 80%;
   height: auto;
   /*display: block;*/
   margin: 0 auto;
   display: block;
   margin-top: 20px;
+}
+
+#centerblock.mobile #threeD-gif {
+  width: 100%;
+  margin-top: 22px;
 }
 
 #centerblock div {
@@ -228,17 +244,15 @@ html {
 }
 
 
-#itemName {
+.itemName {
   font-family: Avenir-Heavy, sans-serif;
-  background-color: white;
   float: left;
   font-size: 1.1em;
   margin: 0;
   color: #414141;
 }
-#itemPrice {
+.itemPrice {
   font-family: Avenir-Heavy, sans-serif;
-  background-color: white;
   float: right;
   text-align: right;
   font-size: 1.1em;
@@ -298,13 +312,25 @@ html {
   /*margin-top: 15%;*/
 }
 
-#itemBox {
+.itemBox {
   clear: both;
   width: 75%;
   display: block;
   padding: 4%;
   height: 1em;
 }
+
+#centerblock.mobile .itemBox {
+  width: 94%;
+  padding: 3%;
+  background-color: black;
+  color: white;
+}
+
+#centerblock.mobile .itemName,#centerblock.mobile .itemPrice  {
+  color: white;
+}
+
 /*hr { 
   margin-top: 1%;
   width:100%; 
@@ -449,6 +475,7 @@ button {
     }
     #centerblock {
       width:100%;
+      min-height: 600px;
     }
     #rightblock {
       width: 100%;
@@ -458,7 +485,7 @@ button {
     body {
       overflow: scroll;
     }
-    #itemBox {
+    .itemBox {
       width: 92%;
     }
     #infoPanel {
@@ -484,6 +511,21 @@ button {
     #imgDisplay {
       height: 82%;
     }
+    #threeD-gif{
+      width: 100%;
+    }
+
+    #centerblock.mobile .itemBox {
+      width: 93%;
+      padding: 3%;
+      background-color: white;
+      
+    }
+    #centerblock.mobile .itemName, #centerblock.mobile .itemPrice  {
+      color: black;
+    }
+
+
 }
 
 
