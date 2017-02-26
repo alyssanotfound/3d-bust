@@ -122,6 +122,10 @@ br {
   cursor: pointer;
 }
 
+#title img {
+  height: 33px;
+}
+
 canvas {
     padding: 0;
     margin: auto;
@@ -155,7 +159,7 @@ html {
   z-index:99999;
   width: 22%;
   height: 100%;
-  border: 1px solid green;
+  /*border: 1px solid green;*/
   float: left;
   /*background-color: white;
   opacity: 0.5;*/
@@ -165,7 +169,7 @@ html {
   z-index:99999;
   width: 23%;
   height: 100%;
-  border: 1px solid blue;
+  /*border: 1px solid blue;*/
   float: right;
   /*background-color: white;
   opacity: 0.5;*/
@@ -176,7 +180,7 @@ html {
   z-index:99999;
   width: 54%;
   height: 100%;
-  border: 1px solid pink;
+  /*border: 1px solid pink;*/
   float: left;
 }
 
@@ -187,8 +191,9 @@ html {
   /*border: 1px solid red;*/
 }
 
-#centerblock.mobile #imgDisplay {  
-  height: 89%;
+#mainbody.mobile #imgDisplay {  
+  height: auto;
+  width: 100%;
 }
 
 
@@ -200,13 +205,13 @@ html {
   display: none;
 }
 
-#centerblock.mobile #twoD-scan{
-  width: 80%;
-  margin-top: 10%;
+#mainbody.mobile #twoD-scan{
+  width: 77%;
+  margin-top: 5%;
 }
 
 #threeD-gif{
-  width: 80%;
+  width: 77%;
   height: auto;
   /*display: block;*/
   margin: 0 auto;
@@ -214,9 +219,10 @@ html {
   margin-top: 20px;
 }
 
-#centerblock.mobile #threeD-gif {
-  width: 100%;
-  margin-top: 22px;
+#mainbody.mobile #threeD-gif {
+  width: 70%;
+  margin-left: 15%;
+  margin-top: 24px;
 }
 
 #centerblock div {
@@ -247,7 +253,7 @@ html {
 .itemName {
   font-family: Avenir-Heavy, sans-serif;
   float: left;
-  font-size: 1.1em;
+  font-size: 1.0em;
   margin: 0;
   color: #414141;
 }
@@ -255,7 +261,7 @@ html {
   font-family: Avenir-Heavy, sans-serif;
   float: right;
   text-align: right;
-  font-size: 1.1em;
+  font-size: 1.0em;
   margin: 0;
   color: #414141;
 }
@@ -320,14 +326,14 @@ html {
   height: 1em;
 }
 
-#centerblock.mobile .itemBox {
+#mainbody.mobile .itemBox {
   width: 94%;
   padding: 3%;
   background-color: black;
   color: white;
 }
 
-#centerblock.mobile .itemName,#centerblock.mobile .itemPrice  {
+#mainbody.mobile .itemName,#mainbody.mobile .itemPrice  {
   color: white;
 }
 
@@ -455,9 +461,33 @@ h2 {
     z-index:999999;
 }*/
 
+#LRarrows {
+  width: 60%;
+  margin-left: 20%;
+  margin-top: 10px;
+}
+
+#LRarrows img {
+  display: none;
+}
+
+#LRarrows #left {
+  float: left;
+}
+
+#LRarrows #right {
+  float: right;
+}
+
+#mainbody.mobile #LRarrows img {
+  display: block;
+  height: 44px;
+}
+
 button {
   outline: none;
 }
+
 
  .shopify-buy__cart-toggle__count {
     padding-right: 7px !important;
@@ -515,16 +545,32 @@ button {
       width: 100%;
     }
 
-    #centerblock.mobile .itemBox {
+    #mainbody.mobile .itemBox {
       width: 93%;
       padding: 3%;
       background-color: white;
+      height: 4%;
       
     }
-    #centerblock.mobile .itemName, #centerblock.mobile .itemPrice  {
+    #mainbody.mobile .itemName, #mainbody.mobile .itemPrice  {
       color: black;
     }
+    
 
+    #mainbody.mobile #threeD-gif {
+      width: 100%;
+      margin-top: 27px;
+      margin-left: 0px;
+    }
+
+    #mainbody.mobile #imgDisplay {  
+      height: 76%;
+    }
+
+    #mainbody.mobile #layer2block {
+      height: 95%;
+      top: 5%;
+    }
 
 }
 

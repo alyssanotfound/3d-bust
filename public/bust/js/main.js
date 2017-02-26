@@ -56,6 +56,45 @@ function init() {
     //2D | 3D options
     document.getElementById("twod").onclick = function() {display2DScan();};
     document.getElementById("threed").onclick = function() {display3DScan();};
+    //arrow buttons
+    document.getElementById("left").onclick = function() {
+        //console.log("left arrow clicked");
+        var currentItem = currentURL.substring(4,6);
+        var newItem;
+        if (currentItem != "01") {
+            var numTemp = Number(currentItem) - 1;
+            if (numTemp.toString().length == 1){
+                numTemp = "0" + numTemp;
+            }
+            newItem = "AO-" + numTemp;  
+        } else if (currentItem == "01") {
+            newItem = "AO-13";
+        }
+        //console.log(newItem);
+        openInfoPanel(newItem); 
+        history.pushState("", "", "#" + newItem);
+        currentURL = window.location.hash;
+        
+    };
+    document.getElementById("right").onclick = function() {
+        //console.log("right arrow clicked");
+        var currentItem = currentURL.substring(4,6);
+        var newItem;
+        if (currentItem != "13") {
+            var numTemp = Number(currentItem) + 1;
+            if (numTemp.toString().length == 1){
+                numTemp = "0" + numTemp;
+            }
+            newItem = "AO-" + numTemp;  
+        } else if (currentItem == "13") {
+            newItem = "AO-01";
+        }
+        //console.log(newItem);
+        openInfoPanel(newItem); 
+        history.pushState("", "", "#" + newItem);
+        currentURL = window.location.hash;
+        
+    };
 
 }
 
@@ -246,7 +285,7 @@ function initMobile() {
     // if(updateClass) {
     //     updateClass.className += updateClass.className ? 'mobile' : 'mobile';
     // }
-    var updateClass = document.getElementById("centerblock");
+    var updateClass = document.getElementById("mainbody");
     if(updateClass) {
         updateClass.className += updateClass.className ? ' mobile' : ' mobile';
     }
@@ -603,7 +642,7 @@ function writeItemDescription(item) {
         document.getElementById('itemBox-bottom').style.display = "none";
         document.getElementById('itemName-top').innerHTML = result[0].name;
         document.getElementById('itemPrice-top').innerHTML = result[0].price;
-        document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/01.png";
+        document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/threed.gif";
     }
     
 
