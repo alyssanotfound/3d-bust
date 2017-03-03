@@ -76,6 +76,10 @@ body {
     font-family: Avenir-Book, LucidaGrande, serif;
 }
 
+#mainbody.mobile {
+  overflow: scroll;
+}
+
 input[type=text] {
     width: 15px;
 }
@@ -153,13 +157,17 @@ html {
 
 }
 
+#mainbody.mobile #layer2block {
+  min-height: 600px;
+}
+
 /*can make width 23% once remove borders*/
 #leftblock {
   position: relative;
   z-index:99999;
   width: 22%;
   height: 100%;
-  /*border: 1px solid green;*/
+  border: 1px solid green;
   float: left;
   /*background-color: white;
   opacity: 0.5;*/
@@ -169,7 +177,7 @@ html {
   z-index:99999;
   width: 23%;
   height: 100%;
-  /*border: 1px solid blue;*/
+  border: 1px solid blue;
   float: right;
   /*background-color: white;
   opacity: 0.5;*/
@@ -180,7 +188,7 @@ html {
   z-index:99999;
   width: 54%;
   height: 100%;
-  /*border: 1px solid pink;*/
+  border: 1px solid pink;
   float: left;
 }
 
@@ -188,27 +196,27 @@ html {
   
   height: 97%;
   width: 100%;
-  /*border: 1px solid red;*/
+  border: 1px solid red;
 }
 
 #mainbody.mobile #imgDisplay {  
-  height: auto;
-  width: 100%;
+  height: 76%;
 }
 
 
 #twoD-scan{
-  width: 68%;
-  height: auto;
+  /*width: 68%;*/
+  height: 100%;
+  width: auto;
   /*display: block;*/
   margin: 0 auto;
   display: none;
 }
 
-#mainbody.mobile #twoD-scan{
+/*#mainbody.mobile #twoD-scan{
   width: 77%;
   margin-top: 5%;
-}
+}*/
 
 #threeD-gif{
   width: 77%;
@@ -239,6 +247,7 @@ html {
   text-align: center;
   font-size: 0.8em;
   color: #BCBCBB;
+  border: 1px solid orange;
 }
 
 #toggleView:hover {
@@ -324,6 +333,10 @@ html {
   display: block;
   padding: 4%;
   height: 1em;
+}
+
+#itemBox-top {
+  border: 1px solid purple;
 }
 
 #mainbody.mobile .itemBox {
@@ -464,7 +477,10 @@ h2 {
 #LRarrows {
   width: 60%;
   margin-left: 20%;
-  margin-top: 10px;
+  position: absolute;
+  border: 1px solid brown;
+  bottom: 0;
+  left: 0;
 }
 
 #LRarrows img {
@@ -535,14 +551,16 @@ button {
       background-color: black;
     }
 
-    #twoD-scan {
+    /*#twoD-scan {
       margin-top:5%;
-    }
+    }*/
+
     #imgDisplay {
       height: 82%;
     }
     #threeD-gif{
       width: 100%;
+      border: solid 1px darkseagreen;
     }
 
     #mainbody.mobile .itemBox {
@@ -559,8 +577,11 @@ button {
 
     #mainbody.mobile #threeD-gif {
       width: 100%;
-      margin-top: 27px;
+      margin-top: 0px;
       margin-left: 0px;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     #mainbody.mobile #imgDisplay {  

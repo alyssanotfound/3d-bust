@@ -102,6 +102,7 @@ function initDesktop() {
 
     container = document.createElement('div');
     document.body.appendChild(container);
+    var ModelCount = document.getElementById("modelCount");
 
     if (!Detector.webgl) {
         Detector.addGetWebGLMessage();
@@ -153,6 +154,7 @@ function initDesktop() {
 
     function loadNextPath() {
         var pathToLoad = paths.pop();
+        ModelCount.innerHTML = pathToLoad;
         // console.log(pathToLoad);
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
@@ -378,9 +380,16 @@ function checkKey(e) {
 function onWindowResize() {
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();            
-    renderer.setSize(window.innerWidth, window.innerHeight); 
+    if (isMobile == false){
+        //check if mobile interface should be loaded
+        if (window.outerWidth <= 600) {
+            location.reload();
+        }
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();            
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+     
     // var previewWidth = document.getElementById("preview").clientWidth;
     // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
     // if (window.innerHeight < 700) {
@@ -531,7 +540,7 @@ function layerTwoUI() {
 }
 
 function display2DScan() {
-    
+    console.log("display2DScan");
     if (isMobile == false) {
         testArray[bustOn].visible = false;   
     } else if (isMobile == true) {
@@ -543,6 +552,7 @@ function display2DScan() {
 }
 
 function display3DScan() {
+    console.log("display3DScan");
     if (isMobile == false) {
         testArray[bustOn].visible = true;
         document.getElementById("threeD-gif").style.display = "none";    
