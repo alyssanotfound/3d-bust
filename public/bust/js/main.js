@@ -109,10 +109,12 @@ function initDesktop() {
     }
     /* Camera */
 
-    camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.x = 0.5;
-    camera.position.y = 0.07;
-    camera.position.z = 3.2;
+    // camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
+    camera = new THREE.OrthographicCamera( window.innerWidth / - 3400, window.innerWidth / 3400,window.innerHeight / 3400, window.innerHeight / - 3400, 1, 500 );
+    camera.position.set(0.5,0.1,3);
+    // camera.position.x = 0.5;
+    // camera.position.y = 0.07;
+    // camera.position.z = 3.2;
 
     /* Scene */
 
@@ -144,7 +146,7 @@ function initDesktop() {
     spotlight.target.position.set(0.5,0,1.5);
     spotlight.target.updateMatrixWorld();
     spotlight.castShadow = false;
-    scene.add( spotlight );
+    // scene.add( spotlight );
 
     /* Generate 13 busts */
     var paths = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
