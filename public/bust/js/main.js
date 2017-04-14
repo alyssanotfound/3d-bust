@@ -100,6 +100,7 @@ function initDesktop() {
     container = document.createElement('div');
     document.body.appendChild(container);
     var ModelCount = document.getElementById("modelCount");
+    var LoadCount = document.getElementById("loadCount");
 
     if (!Detector.webgl) {
         Detector.addGetWebGLMessage();
@@ -208,14 +209,15 @@ function initDesktop() {
                     loadNextPath(); 
                 });
             });
+            // console.timeEnd(pathToLoad);
+            var end = window.performance.now(); 
+            console.log("end: " + end);
+            var time = end - LoadingTimeStamp;
+            console.log(time);
+            LoadingTimeStamp = end;
+            LoadCount.innerHTML = Math.round(time * 100) / 100 + " ms";
         }
-    // console.timeEnd(pathToLoad);
-    var end = window.performance.now(); 
-    console.log("end: " + end);
-    var time = end - LoadingTimeStamp;
-    console.log(time);
-    LoadingTimeStamp = end;
-    ModelCount.innerHTML = pathToLoad + " " + Math.round(time * 100) / 100 + " sec";
+    
     }
     loadNextPath();
 
