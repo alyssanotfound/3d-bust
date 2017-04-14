@@ -158,8 +158,9 @@ function initDesktop() {
         });
 
     function loadNextPath() {
-        console.time('Model Load Time');
         var pathToLoad = paths.pop();
+        // console.time(pathToLoad);
+        var start = window.performance.now();
         ModelCount.innerHTML = pathToLoad;
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
@@ -207,7 +208,11 @@ function initDesktop() {
                 });
             });
         }
-        console.timeEnd( 'Model Load Time' );
+    // console.timeEnd(pathToLoad);
+    var end = window.performance.now(); 
+    var time = end - start;
+    console.log(time);
+    ModelCount.innerHTML = pathToLoad + " " + Math.round(time * 100) / 100 + " sec";
     }
     loadNextPath();
 
