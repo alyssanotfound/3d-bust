@@ -299,7 +299,7 @@ THREE.OBJLoader.prototype = {
 
 	parse: function ( text ) {
 
-		console.time( 'OBJLoader' );
+		// console.time( 'OBJLoader' );
 
 		var state = this._createParserState();
 
@@ -552,7 +552,7 @@ THREE.OBJLoader.prototype = {
 
 		}
 
-		console.timeEnd( 'OBJLoader' );
+		// console.timeEnd( 'OBJLoader' );
 
 		return container;
 

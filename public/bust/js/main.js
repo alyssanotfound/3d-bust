@@ -158,6 +158,7 @@ function initDesktop() {
         });
 
     function loadNextPath() {
+        console.time('Model Load Time');
         var pathToLoad = paths.pop();
         ModelCount.innerHTML = pathToLoad;
         if (!pathToLoad) {
@@ -206,6 +207,7 @@ function initDesktop() {
                 });
             });
         }
+        console.timeEnd( 'Model Load Time' );
     }
     loadNextPath();
 
