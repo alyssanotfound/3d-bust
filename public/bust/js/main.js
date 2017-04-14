@@ -215,7 +215,7 @@ function initDesktop() {
             var time = end - LoadingTimeStamp;
             console.log(time);
             LoadingTimeStamp = end;
-            LoadCount.innerHTML = Math.round(time * 100) / 100 + " ms";
+            LoadCount.innerHTML = Math.round(time * 100 / 1000) / 100 + " s";
         }
     
     }
