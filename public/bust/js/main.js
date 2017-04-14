@@ -129,28 +129,17 @@ function initDesktop() {
     frontSecondLight.castShadow=true;
     scene.add(frontSecondLight);
 
-    backLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    backLight.position.set(100, 0, -100).normalize();
-    // scene.add(backLight);
-
     sunLight = new THREE.SpotLight( 0xffffff, 0, 0, Math.PI/2 );
     sunLight.position.set( 1000, 2000, 1000 );
     sunLight.castShadow = false;
-    scene.add( sunLight );
+    scene.add(sunLight);
 
-    spotlight = new THREE.SpotLight( "rgb(184,176,149)", 0.6, 156, 0.01, 0.7, 1.6 );
-    spotlight.position.set(-10,15,25);
-    spotlight.target.position.set(0.5,0,1.5);
-    spotlight.target.updateMatrixWorld();
-    spotlight.castShadow = false;
-    // scene.add( spotlight );
-
-    spotlightBack = new THREE.SpotLight( "rgb(144,86,170)", 0.5, 156, 0.01, 0.7, 1.6 );
-    spotlightBack.position.set(0.5,0,40);
-    spotlightBack.target.position.set(0.5,0.05,1.5);
-    spotlightBack.target.updateMatrixWorld();
-    spotlightBack.castShadow = false;
-    scene.add( spotlightBack );
+    // spotlightBack = new THREE.SpotLight( "rgb(144,86,170)", 0.5, 156, 0.01, 0.7, 1.6 );
+    // spotlightBack.position.set(0.5,0,40);
+    // spotlightBack.target.position.set(0.5,0.05,1.5);
+    // spotlightBack.target.updateMatrixWorld();
+    // spotlightBack.castShadow = false;
+    // scene.add( spotlightBack );
 
     /* Generate 13 busts */
     var paths = ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
@@ -211,9 +200,9 @@ function initDesktop() {
             });
             // console.timeEnd(pathToLoad);
             var end = window.performance.now(); 
-            console.log("end: " + end);
+            // console.log("end: " + end);
             var time = end - LoadingTimeStamp;
-            console.log(time);
+            // console.log(time);
             LoadingTimeStamp = end;
             LoadCount.innerHTML = Math.round(time * 100 / 1000) / 100 + " s";
         }
@@ -299,19 +288,23 @@ function initMobile() {
 window.onload = function() {
     console.log("start onload");
     console.log(window.outerWidth);
-    if (window.outerWidth > 650) {
-        isMobile = false;
-        console.log("desktop detected");
-        initDesktop();
-        init(); 
+    isMobile = false;
+    console.log("desktop detected");
+    initDesktop();
+    init();
+    // if (window.outerWidth > 650) {
+    //     isMobile = false;
+    //     console.log("desktop detected");
+    //     initDesktop();
+    //     init(); 
         
-    } else {
-        document.getElementById("loadingOverlay").style.display="none";
-        isMobile = true;
-        console.log("mobile detected");
-        initMobile();
-        init();
-    }
+    // } else {
+    //     document.getElementById("loadingOverlay").style.display="none";
+    //     isMobile = true;
+    //     console.log("mobile detected");
+    //     initMobile();
+    //     init();
+    // }
 };
 
 function checkURL() {
@@ -381,16 +374,6 @@ function onWindowResize() {
         camera.updateProjectionMatrix();            
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
-     
-    // var previewWidth = document.getElementById("preview").clientWidth;
-    // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
-    // if (window.innerHeight < 700) {
-    //     console.log("height is less than 700");
-    // } else {
-        
-    // }
-    
-
 }
 
 function turnOnLights() {
@@ -474,7 +457,7 @@ function goBackToLayerOne() {
     pause = false;
     rotateAligned = false;
     sunLight.intensity = 0.0;
-    spotlight.intensity = 0.6;
+    // spotlight.intensity = 0.6;
     history.pushState("", "", "index.html");
     currentURL = "";
     bustOn = undefined;
@@ -574,8 +557,8 @@ function isolateOneBust() {
     turnOffOtherBusts(bustOn); 
     sunLight.intensity = 0.3;
     ambient.intensity = 0.3;
-    spotlight.intensity = 1.0;
-    spotlightBack.intensity = 1.0;
+    // spotlight.intensity = 1.0;
+    // spotlightBack.intensity = 1.0;
 }
 
 function findClosestBust() {
