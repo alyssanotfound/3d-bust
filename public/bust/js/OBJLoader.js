@@ -511,13 +511,11 @@ THREE.OBJLoader.prototype = {
 				buffergeometry.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( geometry.normals ), 3 ) );
 
 			} else {
-
 				buffergeometry.computeVertexNormals();
 
 			}
 
 			if ( geometry.uvs.length > 0 ) {
-
 				buffergeometry.addAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( geometry.uvs ), 2 ) );
 
 			}
@@ -547,7 +545,6 @@ THREE.OBJLoader.prototype = {
 			}
 
 			material.shading = object.material.smooth ? THREE.SmoothShading : THREE.FlatShading;
-
 			var mesh = ( ! isLine ? new THREE.Mesh( buffergeometry, material ) : new THREE.Line( buffergeometry, material ) );
 			mesh.name = object.name;
 

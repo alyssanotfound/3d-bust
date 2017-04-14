@@ -12167,7 +12167,6 @@ THREE.BufferGeometry.prototype = {
 			attributes.normal.needsUpdate = true;
 
 		}
-
 	},
 
 	merge: function ( geometry, offset ) {
@@ -21273,6 +21272,7 @@ THREE.MeshPhongMaterial = function ( parameters ) {
 	this.morphNormals = false;
 
 	this.setValues( parameters );
+	// console.log("making phong material mesh: " + this);
 
 };
 

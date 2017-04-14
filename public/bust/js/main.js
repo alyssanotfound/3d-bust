@@ -3,7 +3,11 @@ var isMobile;
 var container;
 
 //not triggered by layer change
-var camera, controls, scene, raycaster, renderer;
+var camera, controls, raycaster, renderer;
+
+var scene = new THREE.Scene();
+window.scene = scene;
+
 var lighting, ambient, keyLight, fillLight, backLight;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -24,7 +28,6 @@ var revolveClicked = false;
 var openLayerTwoDelay = false;
 
 //check or change when layer changes
-// var firstOpen;
 var bustOn = undefined;
 var allBustsOn = true;
 var autoRotate = true;
@@ -35,8 +38,6 @@ var baseelem;
 var centerelem;
 
 var storedTexture = [];
-// var evt;
-var m;
 
 var currentURL;
 //for rotating bust
@@ -45,6 +46,7 @@ var previousMousePosition = {
     x: 0,
     y: 0
 };
+
 
 function init() {
     /* Events - Mobile and Desktop */
@@ -56,9 +58,7 @@ function init() {
     //2D | 3D options
     document.getElementById("twod").onclick = function() {display2DScan();};
     document.getElementById("threed").onclick = function() {display3DScan();};
-    //arrow buttons
     document.getElementById("left").onclick = function() {
-        //console.log("left arrow clicked");
         var currentItem = currentURL.substring(4,6);
         var newItem;
         if (currentItem != "01") {
@@ -70,14 +70,12 @@ function init() {
         } else if (currentItem == "01") {
             newItem = "AO-13";
         }
-        //console.log(newItem);
         openInfoPanel(newItem); 
         history.pushState("", "", "#" + newItem);
         currentURL = window.location.hash;
         
     };
     document.getElementById("right").onclick = function() {
-        //console.log("right arrow clicked");
         var currentItem = currentURL.substring(4,6);
         var newItem;
         if (currentItem != "13") {
@@ -89,7 +87,6 @@ function init() {
         } else if (currentItem == "13") {
             newItem = "AO-01";
         }
-        //console.log(newItem);
         openInfoPanel(newItem); 
         history.pushState("", "", "#" + newItem);
         currentURL = window.location.hash;
@@ -108,29 +105,28 @@ function initDesktop() {
         Detector.addGetWebGLMessage();
     }
     /* Camera */
-
-    // camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
     camera = new THREE.OrthographicCamera( window.innerWidth / - 3400, window.innerWidth / 3400,window.innerHeight / 3400, window.innerHeight / - 3400, 1, 500 );
     camera.position.set(0.5,0.1,3);
-    // camera.position.x = 0.5;
-    // camera.position.y = 0.07;
-    // camera.position.z = 3.2;
 
     /* Scene */
-
-    scene = new THREE.Scene();
     lighting = false;
 
     ambient = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambient);
 
-    keyLight = new THREE.DirectionalLight(new THREE.Color('hsl(30, 100%, 75%)'), 1.0);
-    keyLight.position.set(-100, 0, 100);
-    // scene.add(keyLight);
+    topLeftLight = new THREE.DirectionalLight("rgb(184,176,149)", 0.9);
+    topLeftLight.position.set(-40, 10, 50);
+    topLeftLight.target.position.set(0.5,0,1.5);
+    topLeftLight.target.updateMatrixWorld();
+    topLeftLight.castShadow=true;
+    scene.add(topLeftLight);
 
-    fillLight = new THREE.DirectionalLight(new THREE.Color('hsl(240, 100%, 75%)'), 0.75);
-    fillLight.position.set(100, 0, 100);
-    // scene.add(fillLight);
+    frontSecondLight = new THREE.DirectionalLight("rgb(144,86,170)", 0.3);
+    frontSecondLight.position.set(0.5, 0, 100);
+    frontSecondLight.target.position.set(0.5,0,1.5);
+    frontSecondLight.target.updateMatrixWorld();
+    frontSecondLight.castShadow=true;
+    scene.add(frontSecondLight);
 
     backLight = new THREE.DirectionalLight(0xffffff, 1.0);
     backLight.position.set(100, 0, -100).normalize();
@@ -141,15 +137,22 @@ function initDesktop() {
     sunLight.castShadow = false;
     scene.add( sunLight );
 
-    spotlight = new THREE.SpotLight( 0x0000ff, 0.6, 156, 0.01, 0.7, 1.6 );
-    spotlight.position.set(0.5,10,15);
+    spotlight = new THREE.SpotLight( "rgb(184,176,149)", 0.6, 156, 0.01, 0.7, 1.6 );
+    spotlight.position.set(-10,15,25);
     spotlight.target.position.set(0.5,0,1.5);
     spotlight.target.updateMatrixWorld();
     spotlight.castShadow = false;
     // scene.add( spotlight );
 
+    spotlightBack = new THREE.SpotLight( "rgb(144,86,170)", 0.5, 156, 0.01, 0.7, 1.6 );
+    spotlightBack.position.set(0.5,0,40);
+    spotlightBack.target.position.set(0.5,0.05,1.5);
+    spotlightBack.target.updateMatrixWorld();
+    spotlightBack.castShadow = false;
+    scene.add( spotlightBack );
+
     /* Generate 13 busts */
-    var paths = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
+    var paths = ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
         .map(function(value) {
             return "assets/2014-AO-" + value + "/";
         });
@@ -157,7 +160,6 @@ function initDesktop() {
     function loadNextPath() {
         var pathToLoad = paths.pop();
         ModelCount.innerHTML = pathToLoad;
-        // console.log(pathToLoad);
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
             animate();
@@ -171,10 +173,6 @@ function initDesktop() {
                 //then change variable so bustOn will be opened
                 var evenInterval = (360/numModels);
                 targetTheta = theta + (evenInterval*incrementBustMatch[Number(URLbust)]);
-                // console.log("URL: " + currentURL);
-                // console.log("URLbust/bustOn: " + URLbust);
-                // console.log("URLbust: " + incrementBustMatch[Number(URLbust)]);
-                // console.log("targetTheta: " + targetTheta);
                 rotateAligned = true;
                 // rotate bust 
                 revolveClicked = true;
@@ -182,22 +180,26 @@ function initDesktop() {
                 openLayerTwoDelay = true;
                 if (isMobile == true) {
                     openInfoPanel(currentURL.substring(1, 6));
-                    // writeItemDescription(currentURL.substring(1, 6));
                 }
-                //layer = "two";
             }
         } else {
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl(pathToLoad);
             mtlLoader.setPath(pathToLoad);                       
             mtlLoader.load('model_mesh.obj.mtl', function (materials) {
+
                 materials.preload();
                 var objLoader = new THREE.OBJLoader();
                 objLoader.setMaterials(materials);
                 objLoader.setPath(pathToLoad);
+                // console.log("loading model");
                 objLoader.load('model_mesh.obj', function (obj) {
+
                     obj.name = pathToLoad.substring(12, 17);
-                    // console.log(obj.name);
+                    var mesh = obj.children[ 0 ]; 
+                    mesh.geometry = new THREE.Geometry().fromBufferGeometry( mesh.geometry ); 
+                    mesh.geometry.mergeVertices(); 
+                    mesh.geometry.computeVertexNormals();
                     testArray.push(obj);
                     scene.add(obj);  
                     loadNextPath(); 
@@ -206,7 +208,6 @@ function initDesktop() {
         }
     }
     loadNextPath();
-
 
     //URL
     currentURL = window.location.hash;
@@ -220,7 +221,6 @@ function initDesktop() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
-    //console.log(renderer.domElement);
     container.appendChild(renderer.domElement);
 
     console.log(isMobile);
@@ -250,33 +250,11 @@ function initDesktop() {
         // msg (elem);
     }, false);
 
-    //var buyButton = document.getElementById('product-component-21fa7a5ac51');
-    // buyButton.addEventListener ('click',  function (e) {
-    //     console.log("clicked buy button");
-    //     e.stopPropagation();
-    //     // msg (elem);
-    // }, false);
-
     window.onpopstate=function() {
         // if (currentURL != "") {
             goBackToLayerOne();
         // }
-        
-
     }
-
-
-    // var centerline = document.getElementById("centerLine");
-    // centerline.style.marginLeft = windowHalfX + "px";
-    //magnifier
-    var evt = new Event();
-    m = new Magnifier(evt);
-
-    
-
-    //SHOPIFY BUTTONS
-    //make a function so that the id is generated based on the item number
-    // document.getElementById("buyButtonWrapper").firstChild.id = "product-component-21fa7a5ac51";
 
     //stats
     // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
@@ -583,7 +561,9 @@ function isolateOneBust() {
     //testArray[bustOn].position.x = 0.5;
     turnOffOtherBusts(bustOn); 
     sunLight.intensity = 0.3;
-    spotlight.intensity = 0.3;
+    ambient.intensity = 0.3;
+    spotlight.intensity = 1.0;
+    spotlightBack.intensity = 1.0;
 }
 
 function findClosestBust() {
@@ -610,26 +590,10 @@ function openInfoPanel(item) {
     baseelem.style.display = 'block';
     leftelem.style.display = 'block';
     centerelem.style.display = 'block';
-
-    // var previewWidth = document.getElementById("preview").clientWidth;
-    // document.getElementById("preview").style.height = previewWidth*1.3775 + "px";
-    // console.log(document.getElementById("preview").style.width);
-    //inner zoom
-    //new ImageZoom("img", {/*options*/});
-    
-    //make so it only applies to product img
-    // new ImageZoom("img", {  
-    //     maxZoom: 5, 
-    // });
-
 }
 
 function writeItemDescription(item) {
-
-    console.log("writeItemDescription: " + item);
-
     var result = AllItems.filter(function( obj ) {
-        // console.log(obj.name);
         return obj.name === item;
     });
     //assign associated shopify button
@@ -655,45 +619,31 @@ function writeItemDescription(item) {
         document.getElementById('itemName-top').innerHTML = result[0].name;
         document.getElementById('itemPrice-top').innerHTML = result[0].price;
         document.getElementById('threeD-gif').src = "/public/bust/assets/3D-gifs/" + result[0].name + "/threed.gif";
-    }
-    
-
-    
+    } 
     ShopifyBuyInit(item);
 }
 
 
-function turnOffOtherBusts(keepOn) {
-    
+function turnOffOtherBusts(keepOn) {   
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != keepOn) {
             storedTexture[i] = testArray[i].children[0].material.map;
-            // testArray[i].visible = false;
             testArray[i].children[0].material.transparent = true;
-            // testArray[i].children[0].material.opacity = "0.5";
-            // testArray[i].children[0].material.wireframe = true;
             testArray[i].children[0].material.color.setHex( 0xD3D3D3 );
             testArray[i].children[0].material.map = null;
             testArray[i].children[0].material.needsUpdate = true;
         }     
     }
-    //put transparent div in front of busts
-    // document.getElementById("loadingOverlay").style.display="block";
-
     allBustsOn = false;
 }
 
 function turnOnAllBusts() {
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != bustOn) {
-            testArray[i].visible = true; 
-            // testArray[i].children[0].material.wireframe = false;
+            testArray[i].visible = true;
             testArray[i].children[0].material.map = storedTexture[i];
             testArray[i].children[0].material.needsUpdate = true;
-            // testArray[i].children[0].material.transparent = true;
-            // testArray[i].children[0].material.opacity = "1.0";
-        }
-              
+        }          
     }
     allBustsOn = true;
 }
@@ -723,13 +673,6 @@ function updateRevolution() {
         testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
         // console.log(testArray[i].rotation.y);
     }
-
-    // for (var i = testArray.length - 1; i >= 0; i--) {
-    //     testArray[i].position.x = Math.cos(radians + i*radianPosition)+0.5;
-    //     testArray[i].position.z = pathEllipse * Math.sin(radians + i*radianPosition)+0.5; 
-    //     //testArray[i].rotation.y = -1*(radians-(Math.PI/2)+ i*radianPosition);
-    // }
-    //}
 }
 
 function findTargetTheta() {
@@ -737,10 +680,7 @@ function findTargetTheta() {
     if (rotateAligned == false) {
         // console.log("align rotation once");
         var incrementTheta = (((Math.abs((theta-initialtheta)/evenInterval)) % 1)*evenInterval);
-         
-        // console.log("increment theta: " + incrementTheta);
-        // console.log("theta: " + theta);
-        
+
         if (theta > 0 && revolveDirection == "left") {
             targetTheta = theta + evenInterval - incrementTheta;
         } else if (theta > 0 && revolveDirection == "right") {
@@ -764,9 +704,6 @@ function findTargetTheta() {
             targetTheta = theta - evenInterval;
         }
     }
-
-    // console.log("current theta: " + theta);
-    // console.log("target theta: " + targetTheta);
 }
 
 function rotateOneBustInterval() {
