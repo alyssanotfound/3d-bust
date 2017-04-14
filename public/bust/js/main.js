@@ -16,7 +16,7 @@ var testArray = [];
 var incrementBustMatch = [3,2,1,0,12,11,10,9,8,7,6,5,4];
 //indicate current layer
 var layer = "one";
-
+var LoadingTimeStamp = 0;
 //check or change with each render, layer 1
 //6.9 loads model centered
 var initialtheta = 6.9;
@@ -160,7 +160,8 @@ function initDesktop() {
     function loadNextPath() {
         var pathToLoad = paths.pop();
         // console.time(pathToLoad);
-        var start = window.performance.now();
+        // var start = window.performance.now();
+        // console.log("start: " + start);
         ModelCount.innerHTML = pathToLoad;
         if (!pathToLoad) {
             console.log("OK THERE SHOULD BE NO ANIMATES BEFORE THIS LINE!");
@@ -210,8 +211,10 @@ function initDesktop() {
         }
     // console.timeEnd(pathToLoad);
     var end = window.performance.now(); 
-    var time = end - start;
+    console.log("end: " + end);
+    var time = end - LoadingTimeStamp;
     console.log(time);
+    LoadingTimeStamp = end;
     ModelCount.innerHTML = pathToLoad + " " + Math.round(time * 100) / 100 + " sec";
     }
     loadNextPath();
