@@ -505,11 +505,11 @@ button {
 }
 
 
- .shopify-buy__cart-toggle__count {
-    padding-right: 7px !important;
-  }
+.shopify-buy__cart-toggle__count {
+  padding-right: 7px !important;
+}
 
-@media only screen 
+/*@media only screen 
   and (max-width: 500px) {
 
     #canvasID {
@@ -549,13 +549,13 @@ button {
     #header {
       color: white;
       background-color: black;
-    }
+    }*/
 
     /*#twoD-scan {
       margin-top:5%;
     }*/
 
-    #imgDisplay {
+    /*#imgDisplay {
       height: 82%;
     }
     #threeD-gif{
@@ -593,7 +593,7 @@ button {
       top: 5%;
     }
 
-}
+}*/
 
 
 

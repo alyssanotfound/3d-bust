@@ -367,9 +367,9 @@ function onWindowResize() {
     windowHalfY = window.innerHeight / 2;
     if (isMobile == false){
         //check if mobile interface should be loaded
-        if (window.outerWidth <= 600) {
-            location.reload();
-        }
+        // if (window.outerWidth <= 600) {
+        //     location.reload();
+        // }
         console.log("resize window");
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();            
