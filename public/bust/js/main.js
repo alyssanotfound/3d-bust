@@ -4,6 +4,7 @@ var container;
 
 //not triggered by layer change
 var camera, controls, raycaster, renderer;
+var canvas;
 
 var scene = new THREE.Scene();
 window.scene = scene;
@@ -59,20 +60,30 @@ function init() {
     document.getElementById("twod").onclick = function() {display2DScan();};
     document.getElementById("threed").onclick = function() {display3DScan();};
     document.getElementById("left").onclick = function() {
-        var currentItem = currentURL.substring(4,6);
-        var newItem;
-        if (currentItem != "01") {
-            var numTemp = Number(currentItem) - 1;
-            if (numTemp.toString().length == 1){
-                numTemp = "0" + numTemp;
-            }
-            newItem = "AO-" + numTemp;  
-        } else if (currentItem == "01") {
-            newItem = "AO-13";
-        }
-        openInfoPanel(newItem); 
-        history.pushState("", "", "#" + newItem);
-        currentURL = window.location.hash;
+        console.log("left button pressed");
+        turnOnAllBusts();
+        // revolveDirection = "right";
+        // findTargetTheta();
+        // revolveClicked = true;
+
+        // var currentItem = currentURL.substring(4,6);
+        // var newItem;
+        // if (currentItem != "01") {
+        //     var numTemp = Number(currentItem) - 1;
+        //     if (numTemp.toString().length == 1){
+        //         numTemp = "0" + numTemp;
+        //     }
+        //     newItem = "AO-" + numTemp;  
+        // } else if (currentItem == "01") {
+        //     newItem = "AO-13";
+        // }
+        // openInfoPanel(newItem); 
+        // history.pushState("", "", "#" + newItem);
+        // currentURL = window.location.hash;
+        // //update 3d model
+        // revolveDirection = "right";
+        // findTargetTheta();
+        // revolveClicked = true;
         
     };
     document.getElementById("right").onclick = function() {
@@ -90,6 +101,10 @@ function init() {
         openInfoPanel(newItem); 
         history.pushState("", "", "#" + newItem);
         currentURL = window.location.hash;
+        //update 3d model
+        revolveDirection = "left";
+        findTargetTheta();
+        revolveClicked = true;
         
     };
 
@@ -107,6 +122,7 @@ function initDesktop() {
     }
     /* Camera */
     camera = new THREE.OrthographicCamera( window.innerWidth / - 3400, window.innerWidth / 3400,window.innerHeight / 3400, window.innerHeight / - 3400, 1, 500 );
+    // camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.set(0.5,0.1,3);
 
     /* Scene */
@@ -217,15 +233,13 @@ function initDesktop() {
     raycaster = new THREE.Raycaster();
 
     /* Renderer */
-    var canvas = document.getElementById("canvasID");
-    renderer = new THREE.WebGLRenderer({ canvas: canvas });
+    canvas = document.getElementById("canvasID");
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(new THREE.Color(0xffffff)); //2a6489
     container.appendChild(renderer.domElement);
 
-    console.log(isMobile);
-    
     /* Events - Desktop Only */
     //for dragging/rotating bust
     document.getElementById("imgDisplay").onmousedown = function() {mouseDown()};
@@ -258,7 +272,7 @@ function initDesktop() {
     }
 
     //stats
-    // javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
+    javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
 
 function initMobile() {
@@ -287,24 +301,26 @@ function initMobile() {
 
 window.onload = function() {
     console.log("start onload");
-    console.log(window.outerWidth);
+    console.log("window pixel width: " + window.outerWidth);
     isMobile = false;
-    console.log("desktop detected");
     initDesktop();
     init();
-    // if (window.outerWidth > 650) {
+
+    if (window.outerWidth > 650) {
+        console.log("desktop detected");
     //     isMobile = false;
     //     console.log("desktop detected");
     //     initDesktop();
     //     init(); 
         
-    // } else {
+    } else {
+        console.log("mobile detected");
     //     document.getElementById("loadingOverlay").style.display="none";
     //     isMobile = true;
     //     console.log("mobile detected");
     //     initMobile();
     //     init();
-    // }
+    }
 };
 
 function checkURL() {
@@ -363,18 +379,20 @@ function checkKey(e) {
 
 
 function onWindowResize() {
+    // console.log("resize window");
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
-    if (isMobile == false){
-        //check if mobile interface should be loaded
-        // if (window.outerWidth <= 600) {
-        //     location.reload();
-        // }
-        console.log("resize window");
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();            
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    
+    // camera.aspect = window.innerWidth / window.innerHeight; 
+    // camera.updateProjectionMatrix();
+    // renderer.setSize( window.innerWidth, window.innerHeight );
+    camera.left = window.innerWidth / - 3400;
+    camera.right = window.innerWidth / 3400;
+    camera.top = window.innerHeight / 3400;
+    camera.bottom = window.innerHeight / - 3400;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
 }
 
 function turnOnLights() {
@@ -483,6 +501,10 @@ function render() {
     if (revolveClicked == true && layer == "one") {
         rotateOneBustInterval();
     } 
+    //called when press L/R buttons on layer 2
+    if (revolveClicked == true && layer == "two") {
+        rotateOneBustInterval();
+    } 
 
     if (layer == "two") {
         // firstOpen = false;
@@ -494,7 +516,12 @@ function render() {
 
 /* Update Frame Functions */
 function layerTwoUI() {
-    if (allBustsOn == true) {
+    console.log("layer two UI called");
+    if (allBustsOn == false) {
+        // rotateOneBustInterval();
+        //this means you just turned off busts to rotate
+        //l/r so add what to do to next (rotate busts, make allbustson true again) 
+    } else if (allBustsOn == true) {
         //check if main page is loaded
         updateURL();
         isolateOneBust();
@@ -576,6 +603,7 @@ function findClosestBust() {
 }
 
 function openInfoPanel(item) {
+
     console.log(item);
     writeItemDescription(item);
     elem = document.getElementById('rightblock');
@@ -620,7 +648,8 @@ function writeItemDescription(item) {
 }
 
 
-function turnOffOtherBusts(keepOn) {   
+function turnOffOtherBusts(keepOn) {  
+    console.log("turn off other busts"); 
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != keepOn) {
             storedTexture[i] = testArray[i].children[0].material.map;
@@ -634,6 +663,7 @@ function turnOffOtherBusts(keepOn) {
 }
 
 function turnOnAllBusts() {
+    console.log("turn on all busts called");
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != bustOn) {
             testArray[i].visible = true;
@@ -672,6 +702,7 @@ function updateRevolution() {
 }
 
 function findTargetTheta() {
+    console.log("find target theta");
     var evenInterval = (360/numModels);
     if (rotateAligned == false) {
         // console.log("align rotation once");
@@ -688,8 +719,8 @@ function findTargetTheta() {
         } 
         rotateAligned = true;
     } else {
-        // console.log("find next");
-        // console.log("theta: " +theta);
+        console.log("find next");
+        console.log("theta: " + theta);
         if (theta > 0 && revolveDirection == "left") {
             targetTheta = theta + evenInterval;
         } else if (theta > 0 && revolveDirection == "right") {

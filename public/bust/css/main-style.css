@@ -131,6 +131,7 @@ br {
 }
 
 canvas {
+    width: 100%;
     padding: 0;
     margin: auto;
     display: block;
@@ -150,7 +151,7 @@ html {
     z-index:99990;
     position: absolute;
     width: 100%;
-    height: 91%;
+    height: 93%;
     top: 6%;
     /*border: 1px solid blue;*/
     display: none;
@@ -193,8 +194,8 @@ html {
 }
 
 #imgDisplay {
-  
-  height: 97%;
+  position: absolute;
+  height: 100%;
   width: 100%;
   border: 1px solid red;
 }
@@ -243,11 +244,14 @@ html {
 }
 
 #toggleView {
-  background-color: white;
+  z-index: 999;
+  position: absolute;
   text-align: center;
-  font-size: 0.8em;
+  font-size: 1.2em;
   color: #BCBCBB;
   border: 1px solid orange;
+  bottom: 0;
+  right: 0;
 }
 
 #toggleView:hover {
@@ -390,10 +394,10 @@ html {
   float: right;
 }
 
-.centered {
+/*.centered {
   width: 60%;
   margin-left: 20%;
-}
+}*/
 
 /*#preview {
     position: relative;
@@ -454,8 +458,10 @@ h2 {
 }
 
 #stats div {          
-  margin-top: 24px;
-  left: 0px;
+  bottom: 40px;
+  right: 100px;
+  left: auto !important;
+  top: auto !important;
 }
 
 #loadingOverlay {
@@ -474,25 +480,24 @@ h2 {
     z-index:999999;
 }*/
 
-#LRarrows {
-  width: 60%;
-  margin-left: 20%;
-  position: absolute;
-  border: 1px solid brown;
-  bottom: 0;
-  left: 0;
-}
-
-#LRarrows img {
-  display: none;
-}
+#LRarrows img:hover {
+  cursor: pointer;
+} 
 
 #LRarrows #left {
-  float: left;
+  z-index: 999;
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  height: 40px;
 }
 
 #LRarrows #right {
-  float: right;
+  z-index: 999;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  height: 40px;
 }
 
 #mainbody.mobile #LRarrows img {
