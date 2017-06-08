@@ -47,7 +47,7 @@ var previousMousePosition = {
     x: 0,
     y: 0
 };
-
+revolveLayerTwo = false;
 
 function init() {
     /* Events - Mobile and Desktop */
@@ -62,50 +62,16 @@ function init() {
     document.getElementById("left").onclick = function() {
         console.log("left button pressed");
         turnOnAllBusts();
-        // revolveDirection = "right";
-        // findTargetTheta();
-        // revolveClicked = true;
-
-        // var currentItem = currentURL.substring(4,6);
-        // var newItem;
-        // if (currentItem != "01") {
-        //     var numTemp = Number(currentItem) - 1;
-        //     if (numTemp.toString().length == 1){
-        //         numTemp = "0" + numTemp;
-        //     }
-        //     newItem = "AO-" + numTemp;  
-        // } else if (currentItem == "01") {
-        //     newItem = "AO-13";
-        // }
-        // openInfoPanel(newItem); 
-        // history.pushState("", "", "#" + newItem);
-        // currentURL = window.location.hash;
-        // //update 3d model
-        // revolveDirection = "right";
-        // findTargetTheta();
-        // revolveClicked = true;
-        
+        revolveDirection = "right";
+        findTargetTheta();
+        revolveClicked = true;       
     };
     document.getElementById("right").onclick = function() {
-        var currentItem = currentURL.substring(4,6);
-        var newItem;
-        if (currentItem != "13") {
-            var numTemp = Number(currentItem) + 1;
-            if (numTemp.toString().length == 1){
-                numTemp = "0" + numTemp;
-            }
-            newItem = "AO-" + numTemp;  
-        } else if (currentItem == "13") {
-            newItem = "AO-01";
-        }
-        openInfoPanel(newItem); 
-        history.pushState("", "", "#" + newItem);
-        currentURL = window.location.hash;
-        //update 3d model
+        console.log("right button pressed");
+        turnOnAllBusts();
         revolveDirection = "left";
         findTargetTheta();
-        revolveClicked = true;
-        
+        revolveClicked = true; 
     };
 
 }
@@ -162,7 +128,7 @@ function initDesktop() {
         .map(function(value) {
             return "assets/2014-AO-" + value + "/";
         });
-
+    j = 0;
     function loadNextPath() {
         var pathToLoad = paths.pop();
         // console.time(pathToLoad);
@@ -210,7 +176,10 @@ function initDesktop() {
                     mesh.geometry.mergeVertices(); 
                     mesh.geometry.computeVertexNormals();
                     testArray.push(obj);
-                    scene.add(obj);  
+                    storedTexture[j] = obj.children[0].material.map;
+                    // console.log(storedTexture[j]);
+                    scene.add(obj); 
+                    j++; 
                     loadNextPath(); 
                 });
             });
@@ -503,10 +472,10 @@ function render() {
     } 
     //called when press L/R buttons on layer 2
     if (revolveClicked == true && layer == "two") {
+        // allBustsOn = true;
         rotateOneBustInterval();
-    } 
-
-    if (layer == "two") {
+        bustOn = undefined;
+    } else if (layer == "two") {
         // firstOpen = false;
         layerTwoUI();   
     }
@@ -517,11 +486,7 @@ function render() {
 /* Update Frame Functions */
 function layerTwoUI() {
     console.log("layer two UI called");
-    if (allBustsOn == false) {
-        // rotateOneBustInterval();
-        //this means you just turned off busts to rotate
-        //l/r so add what to do to next (rotate busts, make allbustson true again) 
-    } else if (allBustsOn == true) {
+    if (allBustsOn == true) {
         //check if main page is loaded
         updateURL();
         isolateOneBust();
@@ -583,6 +548,10 @@ function isolateOneBust() {
     testArray[bustOn].position.x = 0.5;
     //testArray[bustOn].position.x = 0.5;
     turnOffOtherBusts(bustOn); 
+    // testArray[bustOn].visible = true;
+    // console.log(storedTexture[bustOn]);
+    // testArray[bustOn].children[0].material.map = storedTexture[bustOn];
+    // testArray[bustOn].children[0].material.needsUpdate = true;
     sunLight.intensity = 0.3;
     ambient.intensity = 0.3;
     // spotlight.intensity = 1.0;
@@ -652,7 +621,6 @@ function turnOffOtherBusts(keepOn) {
     console.log("turn off other busts"); 
     for (var i = testArray.length - 1; i >= 0; i--) {
         if (i != keepOn) {
-            storedTexture[i] = testArray[i].children[0].material.map;
             testArray[i].children[0].material.transparent = true;
             testArray[i].children[0].material.color.setHex( 0xD3D3D3 );
             testArray[i].children[0].material.map = null;
@@ -779,8 +747,9 @@ function rotateOneBustInterval() {
         }
 
     }
-
+    // revolveLayerTwo = false;
 }
+
 //Geometry functions
 function toRadians(angle) {
     return angle * (Math.PI / 180);
