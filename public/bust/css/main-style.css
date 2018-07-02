@@ -168,7 +168,7 @@ html {
   z-index:99999;
   width: 22%;
   height: 100%;
-  border: 1px solid green;
+  /*border: 1px solid green;*/
   float: left;
   /*background-color: white;
   opacity: 0.5;*/
@@ -178,7 +178,7 @@ html {
   z-index:99999;
   width: 23%;
   height: 100%;
-  border: 1px solid blue;
+  /*border: 1px solid blue;*/
   float: right;
   /*background-color: white;
   opacity: 0.5;*/
@@ -189,7 +189,7 @@ html {
   z-index:99999;
   width: 54%;
   height: 100%;
-  border: 1px solid pink;
+  /*border: 1px solid pink;*/
   float: left;
 }
 
@@ -197,7 +197,7 @@ html {
   position: absolute;
   height: 100%;
   width: 100%;
-  border: 1px solid red;
+  /*border: 1px solid red;*/
 }
 
 #mainbody.mobile #imgDisplay {  
@@ -249,7 +249,7 @@ html {
   text-align: center;
   font-size: 1.2em;
   color: #BCBCBB;
-  border: 1px solid orange;
+  /*border: 1px solid orange;*/
   bottom: 0;
   right: 0;
 }

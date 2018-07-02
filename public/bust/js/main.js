@@ -61,6 +61,7 @@ function init() {
     document.getElementById("threed").onclick = function() {display3DScan();};
     document.getElementById("left").onclick = function() {
         console.log("left button pressed");
+        display3DScan();
         turnOnAllBusts();
         revolveDirection = "right";
         findTargetTheta();
@@ -68,6 +69,7 @@ function init() {
     };
     document.getElementById("right").onclick = function() {
         console.log("right button pressed");
+        display3DScan();
         turnOnAllBusts();
         revolveDirection = "left";
         findTargetTheta();
@@ -89,7 +91,7 @@ function initDesktop() {
     /* Camera */
     camera = new THREE.OrthographicCamera( window.innerWidth / - 3400, window.innerWidth / 3400,window.innerHeight / 3400, window.innerHeight / - 3400, 1, 500 );
     // camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.set(0.5,0.1,3);
+    camera.position.set(0.5,0.12,3);
 
     /* Scene */
     lighting = false;
@@ -125,6 +127,8 @@ function initDesktop() {
 
     /* Generate 13 busts */
     var paths = ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]
+    // var paths = ["01","02", "03", "04", "05", "06"]
+
         .map(function(value) {
             return "assets/2014-AO-" + value + "/";
         });
@@ -178,6 +182,10 @@ function initDesktop() {
                     testArray.push(obj);
                     storedTexture[j] = obj.children[0].material.map;
                     // console.log(storedTexture[j]);
+                    obj.scale.x = 0.7;
+                    obj.scale.y = 0.7;
+                    obj.scale.z = 0.7;
+                    obj.position = -0.5;
                     scene.add(obj); 
                     j++; 
                     loadNextPath(); 
@@ -239,7 +247,6 @@ function initDesktop() {
             goBackToLayerOne();
         // }
     }
-
     //stats
     javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.getElementById("stats").appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()   
 }
@@ -336,16 +343,25 @@ function checkKey(e) {
     e = e || window.event;
 
     if (e.keyCode == '37' && revolveClicked == false) {
+        if (layer == "two") {
+            display3DScan();
+            turnOnAllBusts(); 
+            
+        }
         revolveDirection = "right";
         findTargetTheta();
         revolveClicked = true;
     } else if (e.keyCode == '39' && revolveClicked == false) {
+        if (layer == "two") {
+            display3DScan();
+            turnOnAllBusts(); 
+        }
         revolveDirection = "left";
         findTargetTheta();
         revolveClicked = true;
     }
 }
-
+ 
 
 function onWindowResize() {
     // console.log("resize window");
@@ -365,7 +381,7 @@ function onWindowResize() {
 }
 
 function turnOnLights() {
-    ambient.intensity = 0.35;
+    ambient.intensity = 0.76;
     scene.add(keyLight);
     scene.add(fillLight);
     scene.add(backLight);
@@ -485,7 +501,7 @@ function render() {
 
 /* Update Frame Functions */
 function layerTwoUI() {
-    console.log("layer two UI called");
+    // console.log("layer two UI called");
     if (allBustsOn == true) {
         //check if main page is loaded
         updateURL();
@@ -758,21 +774,5 @@ function toRadians(angle) {
 function toDegrees(angle) {
     return angle * (180 / Math.PI);
 }
-
-// MOBILE FUNCTIONS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
